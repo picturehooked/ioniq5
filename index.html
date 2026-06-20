@@ -222,8 +222,10 @@
     .colour-card-name { font-size: 11px; }
     .colour-card-name2 { font-size: 9px; }
     .comparison { flex-direction: column; padding: 0 12px 10px; gap: 6px; }
-    .specs-heading { font-size: 15px; }
-    .specs-list li { font-size: 11px; gap: 4px; }
+    .specs-heading { font-size: 13px; margin-bottom: 8px; }
+    .specs-list li { font-size: 10px; gap: 5px; }
+    .specs-list li::before { font-size: 6px; margin-top: 3px; }
+    .specs-overlay { padding: 14px 12px 14px 15%; }
     .key-hint { display: none; }
     #lb-prev { left: 8px; }
     #lb-next { right: 8px; }
@@ -316,11 +318,10 @@ const SPECS = {
     items: [
       '20" alloy wheels',
       'Full leather seats',
-      'Digital Key',
-      'Head-up display',
-      'Full colour range — red standard',
-      'Zen Pack optional: memory seats, vision roof',
-      'Tech Pack optional: park assist, surround-view monitors',
+      'Digital Key / Head-up display',
+      'Full colour range, red standard',
+      'Zen Pack (opt)',
+      'Tech Pack (opt)',
     ],
   },
   nline: {
@@ -498,7 +499,10 @@ function render() {
     const label   = document.getElementById(`plabel-${idx}`);
     const specs   = document.getElementById(`specs-${idx}`);
 
-    if (label) label.textContent = panel.label;
+    if (label) {
+      label.textContent = panel.label;
+      label.style.display = isSpecs ? 'none' : '';
+    }
 
     // Specs view: show dimmed side image + specs overlay
     if (isSpecs && specs) {
