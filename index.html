@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#080808">
 <title>Hyundai Ioniq 5 · 2026</title>
 <style>
   :root {
@@ -26,134 +30,147 @@
   }
 
   /* ── HEADER ── */
-  header {
-    flex-shrink: 0;
-    padding: 12px 20px 10px;
-    display: flex; flex-direction: column; gap: 8px;
-  }
-
+  header { flex-shrink: 0; padding: 12px 20px 8px; display: flex; flex-direction: column; gap: 8px; }
   .brand-row { display: flex; align-items: baseline; gap: 8px; }
-  .brand-title {
-    font-size: 12px; font-weight: 700;
-    letter-spacing: 0.16em; text-transform: uppercase; color: var(--text);
-  }
-  .brand-year { font-size: 12px; font-weight: 400; letter-spacing: 0.06em; color: var(--text-muted); }
+  .brand-title { font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text); }
+  .brand-year  { font-size: 12px; font-weight: 400; letter-spacing: 0.06em; color: var(--text-muted); }
 
-  /* ── COLOUR SELECTOR ── */
-  .colour-selector {
-    display: flex; align-items: center; gap: 10px;
-  }
-
+  /* ── COLOUR SLATES ── */
+  .colour-selector { display: flex; gap: 8px; }
   .colour-card {
-    padding: 9px 14px;
-    border-radius: var(--radius);
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: border-color 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+    flex: 1; padding: 9px 12px;
+    border-radius: var(--radius); border: 2px solid transparent;
+    cursor: pointer; transition: border-color 0.25s, transform 0.15s, box-shadow 0.25s;
     user-select: none; position: relative; overflow: hidden;
-    flex: 1; max-width: 200px;
   }
   .colour-card:hover { transform: translateY(-1px); }
   .colour-card.active {
     border-color: rgba(255,255,255,0.6);
     box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 4px 20px rgba(0,0,0,0.5);
   }
-  .colour-card.ecotronic-card {
-    background: linear-gradient(145deg, #7a7f78 0%, #5e6359 40%, #444840 100%);
-  }
-  .colour-card.cyber-card {
-    background: linear-gradient(145deg, #d0d4d8 0%, #b0b6bc 40%, #8e9399 100%);
-  }
+  .colour-card.ecotronic-card { background: linear-gradient(145deg, #7a7f78 0%, #5e6359 40%, #444840 100%); }
+  .colour-card.cyber-card     { background: linear-gradient(145deg, #d0d4d8 0%, #b0b6bc 40%, #8e9399 100%); }
+  .colour-card.red-card       { background: linear-gradient(145deg, #cc3b2a 0%, #a82d1e 40%, #7a1f13 100%); }
   .colour-card-name {
-    font-size: 13px; font-weight: 700; color: #fff; line-height: 1.25;
-    text-shadow:
-      -0.5px -0.5px 0 #000,  0.5px -0.5px 0 #000,
-      -0.5px  0.5px 0 #000,  0.5px  0.5px 0 #000,
-       0 2px 6px rgba(0,0,0,0.35);
+    font-size: 12px; font-weight: 700; color: #fff; line-height: 1.2;
+    text-shadow: -0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000, 0 2px 6px rgba(0,0,0,0.35);
+  }
+  .colour-card-name2 {
+    font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.8); line-height: 1.2; margin-top: 2px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
   }
   .active-tick {
-    position: absolute; top: 8px; right: 10px;
-    width: 16px; height: 16px;
+    position: absolute; top: 8px; right: 8px; width: 15px; height: 15px;
     background: rgba(255,255,255,0.2); border: 1.5px solid rgba(255,255,255,0.5);
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity 0.2s ease;
+    opacity: 0; transition: opacity 0.2s;
   }
   .colour-card.active .active-tick { opacity: 1; }
-  .active-tick svg { width: 8px; height: 8px; color: #fff; }
+  .active-tick svg { width: 7px; height: 7px; color: #fff; }
 
-  /* ── HYUNDAI LOGO ── */
-  .hyundai-logo {
-    flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    padding: 0 4px;
+  /* ── COMPARE BAR ── */
+  .compare-bar { display: flex; align-items: center; gap: 6px; }
+  .compare-label { font-size: 10px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.16em; text-transform: uppercase; margin-right: 2px; }
+  .compare-tab {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    padding: 3px 10px; border-radius: 20px; cursor: pointer;
+    border: 1px solid transparent;
+    transition: color 0.2s, background 0.2s, border-color 0.2s; user-select: none;
   }
-  .hyundai-logo img {
-    height: 36px; width: auto;
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
-    filter: brightness(0) invert(1);
+  .compare-tab.active { color: var(--accent); background: var(--accent-dim); border-color: rgba(200,169,110,0.3); }
+  .compare-tab:not(.active):hover { color: var(--text); }
+  .model-picker { display: none; align-items: center; gap: 4px; margin-left: 8px; }
+  .model-picker.visible { display: flex; }
+  .model-pill {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    padding: 3px 10px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--border);
+    transition: color 0.2s, background 0.2s, border-color 0.2s; user-select: none;
   }
-  .hyundai-logo:hover img { opacity: 0.85; }
+  .model-pill.active { color: var(--text); background: var(--surface); border-color: rgba(255,255,255,0.25); }
+  .model-pill:not(.active):hover { color: var(--text); }
 
   /* ── COMPARISON AREA ── */
-  .comparison {
-    flex: 1; display: flex; gap: 8px;
-    padding: 0 20px 14px;
-    min-height: 0; overflow: hidden;
-  }
+  .comparison { flex: 1; display: flex; gap: 8px; padding: 0 20px 14px; min-height: 0; overflow: hidden; }
 
   .model-panel {
-    flex: 1; display: flex; flex-direction: column;
+    flex: 1; position: relative;
     background: var(--surface); border-radius: var(--radius);
-    overflow: hidden; min-height: 0;
-    border: 1px solid var(--border); position: relative;
+    overflow: hidden; min-height: 0; border: 1px solid var(--border);
   }
 
-  .model-header {
-    padding: 8px 12px 7px;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .model-name { font-size: 13px; font-weight: 700; color: var(--text); }
-
-  .image-wrap {
-    flex: 1; position: relative; overflow: hidden;
-    background: #0c0c0c; min-height: 0;
-  }
+  .image-wrap { position: absolute; inset: 0; background: #0c0c0c; }
 
   .car-img {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
+    position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: contain; padding: 8px;
-    will-change: opacity, transform;
-    cursor: zoom-in;
+    will-change: opacity, transform; cursor: zoom-in;
+    transition: filter 0.3s ease;
+  }
+  .car-img.dimmed { filter: brightness(0.25) blur(1px); }
+
+  /* Panel label pill */
+  .panel-label {
+    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    z-index: 4; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+    padding: 3px 12px; font-size: 12px; font-weight: 700; color: var(--text);
+    white-space: nowrap; letter-spacing: 0.02em;
+  }
+
+  /* Hyundai logo */
+  .panel-logo {
+    position: absolute; top: 8px; left: 10px; z-index: 4;
+    height: 22px; width: auto; opacity: 0.3;
+    filter: brightness(0) invert(1); pointer-events: none;
   }
 
   .missing-placeholder {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 8px; opacity: 0.2;
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 8px; opacity: 0.2;
   }
   .missing-placeholder svg { width: 32px; height: 32px; }
   .missing-placeholder p { font-size: 10px; color: var(--text-muted); }
 
-  /* ── PANEL ARROWS (N Line S only) ── */
+  /* ── SPECS OVERLAY ── */
+  .specs-overlay {
+    display: none;
+    position: absolute; inset: 0; z-index: 3;
+    flex-direction: column; justify-content: center;
+    padding: 20px 18px 20px 20px;
+    background: linear-gradient(110deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.75) 70%, rgba(0,0,0,0.4) 100%);
+  }
+  .specs-overlay.visible { display: flex; }
+
+  .specs-grade {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 6px;
+  }
+  .specs-heading {
+    font-size: 16px; font-weight: 700; color: var(--text);
+    letter-spacing: 0.02em; margin-bottom: 14px; line-height: 1.2;
+  }
+  .specs-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .specs-list li {
+    font-size: 12px; color: rgba(255,255,255,0.88); line-height: 1.4;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .specs-list li::before { content: '—'; color: var(--accent); flex-shrink: 0; font-size: 11px; margin-top: 1px; }
+  .specs-note {
+    font-size: 10px; color: var(--text-muted); margin-top: 12px;
+    font-style: italic; line-height: 1.4;
+  }
+
+  /* ── PANEL ARROWS ── */
   .panel-arrow {
     position: absolute; top: 50%; transform: translateY(-50%);
     z-index: 5; width: 36px; height: 36px; border-radius: 50%;
     border: 1.5px solid rgba(255,255,255,0.14);
-    background: rgba(8,8,8,0.72); backdrop-filter: blur(6px);
-    color: var(--text);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
+    background: rgba(8,8,8,0.72); backdrop-filter: blur(6px); color: var(--text);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
     transition: border-color 0.2s, background 0.2s, opacity 0.2s, transform 0.15s;
   }
-  .panel-arrow:hover:not(:disabled) {
-    border-color: var(--accent); background: var(--accent-dim);
-    transform: translateY(-50%) scale(1.08);
-  }
-  .panel-arrow:disabled { opacity: 0.18; cursor: default; pointer-events: none; }
+  .panel-arrow:hover { border-color: var(--accent); background: var(--accent-dim); transform: translateY(-50%) scale(1.08); }
   .panel-arrow svg { width: 18px; height: 18px; }
   .panel-arrow-left  { left: 8px; }
   .panel-arrow-right { right: 8px; }
@@ -161,96 +178,57 @@
   /* ── LIGHTBOX ── */
   #lightbox {
     display: none; position: fixed; inset: 0; z-index: 100;
-    background: rgba(0,0,0,0.96);
-    align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.96); align-items: center; justify-content: center;
   }
   #lightbox.open { display: flex; }
-
   #lightbox-img {
-    max-width: 92vw; max-height: 92vh;
-    object-fit: contain; border-radius: 4px;
-    pointer-events: none;
-    transition: opacity 0.22s ease;
+    max-width: 92vw; max-height: 92vh; object-fit: contain; border-radius: 4px;
+    pointer-events: none; transition: opacity 0.22s ease;
   }
   #lightbox-img.fading { opacity: 0; }
-
-  /* Mobile portrait: rotate 90° */
   @media (max-width: 680px) and (orientation: portrait) {
-    #lightbox-img {
-      transform: rotate(90deg);
-      max-width: 92vh; max-height: 92vw;
-    }
+    #lightbox-img { transform: rotate(90deg); max-width: 92vh; max-height: 92vw; }
   }
-
-  /* Model name — top left */
   #lightbox-model {
-    position: fixed; top: 18px; left: 20px;
-    font-size: 14px; font-weight: 700; color: #fff;
-    letter-spacing: 0.04em;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
-    pointer-events: none;
-    z-index: 102;
+    position: fixed; top: 18px; left: 20px; font-size: 14px; font-weight: 700; color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6); pointer-events: none; z-index: 102;
   }
-
-  /* Close button — top right */
   #lightbox-close {
-    position: fixed; top: 14px; right: 16px;
-    width: 34px; height: 34px; border-radius: 50%;
-    border: 1.5px solid rgba(255,255,255,0.22);
-    background: rgba(20,20,20,0.8); backdrop-filter: blur(6px);
+    position: fixed; top: 14px; right: 16px; width: 34px; height: 34px; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.22); background: rgba(20,20,20,0.8); backdrop-filter: blur(6px);
     color: #fff; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; z-index: 102;
+    cursor: pointer; z-index: 102; font-size: 13px; font-weight: 500;
     transition: border-color 0.2s, background 0.2s;
-    font-size: 13px; font-weight: 500; letter-spacing: 0.02em;
   }
   #lightbox-close:hover { border-color: var(--accent); background: var(--accent-dim); }
-
-  /* Lightbox prev/next */
   .lb-arrow {
     position: fixed; top: 50%; transform: translateY(-50%);
     z-index: 102; width: 44px; height: 44px; border-radius: 50%;
-    border: 1.5px solid rgba(255,255,255,0.16);
-    background: rgba(12,12,12,0.75); backdrop-filter: blur(8px);
-    color: #fff; display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
+    border: 1.5px solid rgba(255,255,255,0.16); background: rgba(12,12,12,0.75); backdrop-filter: blur(8px);
+    color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer;
     transition: border-color 0.2s, background 0.2s, opacity 0.2s, transform 0.15s;
   }
-  .lb-arrow:hover:not(:disabled) {
-    border-color: var(--accent); background: var(--accent-dim);
-    transform: translateY(-50%) scale(1.06);
-  }
+  .lb-arrow:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-dim); transform: translateY(-50%) scale(1.06); }
   .lb-arrow:disabled { opacity: 0.15; cursor: default; pointer-events: none; }
   .lb-arrow svg { width: 20px; height: 20px; }
   #lb-prev { left: 16px; }
   #lb-next { right: 16px; }
-
-  /* Model counter dots — bottom centre */
-  #lb-dots {
-    position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 8px; z-index: 102;
-  }
-  .lb-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: rgba(255,255,255,0.25);
-    transition: background 0.2s, transform 0.2s;
-    cursor: pointer;
-  }
+  #lb-dots { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 102; }
+  .lb-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.25); transition: background 0.2s, transform 0.2s; cursor: pointer; }
   .lb-dot.active { background: var(--accent); transform: scale(1.4); }
 
   /* ── KEYBOARD HINT ── */
-  .key-hint {
-    position: fixed; bottom: 10px; right: 14px;
-    font-size: 10px; color: rgba(255,255,255,0.12);
-    letter-spacing: 0.05em; pointer-events: none;
-  }
+  .key-hint { position: fixed; bottom: 10px; right: 14px; font-size: 10px; color: rgba(255,255,255,0.12); letter-spacing: 0.05em; pointer-events: none; }
 
   /* ── MOBILE ── */
   @media (max-width: 680px) {
-    header { padding: 8px 12px 8px; gap: 7px; }
-    .colour-card { padding: 8px 10px; }
+    header { padding: 10px 12px 6px; gap: 6px; }
+    .colour-card { padding: 7px 10px; }
     .colour-card-name { font-size: 11px; }
-    .hyundai-logo svg { width: 28px; height: 28px; }
+    .colour-card-name2 { font-size: 9px; }
     .comparison { flex-direction: column; padding: 0 12px 10px; gap: 6px; }
+    .specs-heading { font-size: 13px; }
+    .specs-list li { font-size: 11px; }
     .key-hint { display: none; }
     #lb-prev { left: 8px; }
     #lb-next { right: 8px; }
@@ -266,22 +244,27 @@
   </div>
   <div class="colour-selector">
     <div class="colour-card ecotronic-card active" data-colour="ecotronic" onclick="setColour('ecotronic')">
-      <div class="active-tick">
-        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg>
-      </div>
+      <div class="active-tick"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
       <div class="colour-card-name">Ecotronic Grey Pearl</div>
     </div>
-
-    <!-- Hyundai logo -->
-    <div class="hyundai-logo">
-      <img src="hyundailogo.png" alt="Hyundai">
-    </div>
-
     <div class="colour-card cyber-card" data-colour="cyber" onclick="setColour('cyber')">
-      <div class="active-tick">
-        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg>
-      </div>
+      <div class="active-tick"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
       <div class="colour-card-name">Cyber Grey Metallic</div>
+    </div>
+    <div class="colour-card red-card" data-colour="red" onclick="setColour('red')">
+      <div class="active-tick"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
+      <div class="colour-card-name">Ultimate Red Metallic</div>
+      <div class="colour-card-name2">Soultronic Orange Pearl (5 N)</div>
+    </div>
+  </div>
+  <div class="compare-bar">
+    <span class="compare-label">Compare</span>
+    <div class="compare-tab active" onclick="setMode('models')">Models</div>
+    <div class="compare-tab" onclick="setMode('colours')">Colours</div>
+    <div class="model-picker" id="modelPicker">
+      <div class="model-pill active" data-model="ultimate" onclick="setPickedModel('ultimate')">Ultimate</div>
+      <div class="model-pill" data-model="nline" onclick="setPickedModel('nline')">N Line S</div>
+      <div class="model-pill" data-model="n" onclick="setPickedModel('n')">5 N</div>
     </div>
   </div>
 </header>
@@ -291,31 +274,31 @@
 <!-- Lightbox -->
 <div id="lightbox">
   <div id="lightbox-model"></div>
-
-  <button class="lb-arrow" id="lb-prev" onclick="lbNavigate(-1)" aria-label="Previous model">
+  <button class="lb-arrow" id="lb-prev" onclick="lbNavigate(-1)" aria-label="Previous">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
-
   <img id="lightbox-img" src="" alt="">
-
-  <button class="lb-arrow" id="lb-next" onclick="lbNavigate(1)" aria-label="Next model">
+  <button class="lb-arrow" id="lb-next" onclick="lbNavigate(1)" aria-label="Next">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
   </button>
-
-  <button id="lightbox-close" onclick="closeLightbox()" aria-label="Close">✕</button>
-
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
   <div id="lb-dots"></div>
 </div>
 
 <div class="key-hint">← → angle · tap image to expand</div>
 
 <script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+
 const VIEWS = [
-  { label: 'Front',      key: 'front'      },
-  { label: 'Front Side', key: 'front-side' },
-  { label: 'Side',       key: 'side'       },
-  { label: 'Rear Side',  key: 'rear-side'  },
-  { label: 'Rear',       key: 'rear'       },
+  { label: 'Front',      key: 'front',      interior: false, modelsOnly: false },
+  { label: 'Front Side', key: 'front-side', interior: false, modelsOnly: false },
+  { label: 'Side',       key: 'side',       interior: false, modelsOnly: false },
+  { label: 'Rear Side',  key: 'rear-side',  interior: false, modelsOnly: false },
+  { label: 'Rear',       key: 'rear',       interior: false, modelsOnly: false },
+  { label: 'Dashboard',  key: 'dash',       interior: true,  modelsOnly: false },
+  { label: 'Seats',      key: 'seats',      interior: true,  modelsOnly: false },
+  { label: 'Specs',      key: 'specs',      interior: false, modelsOnly: true  },
 ];
 
 const MODELS = [
@@ -324,54 +307,148 @@ const MODELS = [
   { id: 'n',        name: '5 N'      },
 ];
 
-const images = {
+// Colour order matches slate order: ecotronic → cyber → red
+const COLOURS = [
+  { key: 'ecotronic', name: 'Ecotronic Grey Pearl',  name5n: null },
+  { key: 'cyber',     name: 'Cyber Grey Metallic',   name5n: null },
+  { key: 'red',       name: 'Ultimate Red Metallic', name5n: 'Soultronic Orange Pearl' },
+];
+
+const SPECS = {
   ultimate: {
-    'front':      { ecotronic: 'ultimate front ecotronic.jpeg',      cyber: 'ultimate front cyber grey.jpeg'      },
-    'front-side': { ecotronic: 'ultimate front side ecotronic.jpeg',  cyber: 'ultimate front side cyber grey.jpeg' },
-    'side':       { ecotronic: 'ultimate side ecotronic.jpeg',        cyber: 'ultimate side cyber grey.jpeg'       },
-    'rear-side':  { ecotronic: 'ultimate rear side ecotronic.jpeg',   cyber: 'ultimate rear side cyber grey.jpeg'  },
-    'rear':       { ecotronic: 'ultimate rear ecotronic.jpeg',        cyber: 'ultimate rear cyber grey.jpeg'       },
+    grade: 'Non-Performance',
+    heading: 'Ultimate',
+    items: [
+      '20" alloy wheels',
+      'Full leather seats',
+      'Digital Key',
+      'Head-up display',
+      'Full colour range — red standard',
+      'Zen Pack optional: memory seats, vision roof',
+      'Tech Pack optional: park assist, surround-view monitors',
+    ],
   },
   nline: {
-    'front':      { ecotronic: 'n line front ecotronic.jpeg',         cyber: 'n line front cyber grey.jpeg'       },
-    'front-side': { ecotronic: 'n line front side ecotronic.jpeg',    cyber: 'n line front side cyber grey.jpeg'  },
-    'side':       { ecotronic: 'n line side ecotronic.jpeg',          cyber: 'n line side cyber grey.jpeg'        },
-    'rear-side':  { ecotronic: 'n line rear side ecotronic.jpeg',     cyber: 'n line rear side cyber grey.jpeg'   },
-    'rear':       { ecotronic: 'n line rear ecotronic.jpeg',          cyber: 'n line rear cyber grey.jpeg'        },
+    grade: 'Non-Performance',
+    heading: 'N Line S',
+    items: [
+      '20" alloy wheels — upgraded design',
+      'Leather & alcantara panel seats',
+      'Zen & Tech Packs included as standard',
+      'Restricted colour range — no teal or blue',
+    ],
   },
   n: {
-    'front':      { ecotronic: 'n front ecotronic.jpeg',              cyber: 'n front cyber grey.jpeg'            },
-    'front-side': { ecotronic: 'n front side ecotronic.jpeg',         cyber: 'n front side cyber grey.jpeg'       },
-    'side':       { ecotronic: 'n side ecotronic.jpeg',               cyber: 'n side cyber grey.jpeg'             },
-    'rear-side':  { ecotronic: 'n back side ecotronic.jpeg',          cyber: 'n back side cyber grey.jpeg'        },
-    'rear':       { ecotronic: 'n rear ecotronic.jpeg',               cyber: 'n rear cyber grey.jpeg'             },
+    grade: 'Performance',
+    heading: '5 N',
+    items: [
+      '21" alloy wheels — sporty design',
+      'Bucket alcantara seats',
+      'Vision roof optional',
+      'Limited colour range',
+      'Performance Blue available exclusively',
+    ],
   },
 };
 
+// Image map
+const images = {
+  ultimate: {
+    'front':     { ecotronic: 'Ecotronic/ultimate front ecotronic.jpeg',      cyber: 'Cyber Grey/ultimate front cyber grey.jpeg',      red: 'red/ultimate front red.jpeg'      },
+    'front-side':{ ecotronic: 'Ecotronic/ultimate front side ecotronic.jpeg',  cyber: 'Cyber Grey/ultimate front side cyber grey.jpeg',  red: 'red/ultimate front side red.jpeg'  },
+    'side':      { ecotronic: 'Ecotronic/ultimate side ecotronic.jpeg',        cyber: 'Cyber Grey/ultimate side cyber grey.jpeg',        red: 'red/ultimate side red.jpeg'        },
+    'rear-side': { ecotronic: 'Ecotronic/ultimate rear side ecotronic.jpeg',   cyber: 'Cyber Grey/ultimate rear side cyber grey.jpeg',   red: 'red/ultimate rear side red.jpeg'   },
+    'rear':      { ecotronic: 'Ecotronic/ultimate rear ecotronic.jpeg',        cyber: 'Cyber Grey/ultimate rear cyber grey.jpeg',        red: 'red/ultimate rear red.jpeg'        },
+    'dash':      { ecotronic: 'ultimate dash.jpeg',  cyber: 'ultimate dash.jpeg',  red: 'ultimate dash.jpeg'  },
+    'seats':     { ecotronic: 'ultimate seats.jpeg', cyber: 'ultimate seats.jpeg', red: 'ultimate seats.jpeg' },
+    'specs':     { ecotronic: 'Ecotronic/ultimate side ecotronic.jpeg',        cyber: 'Cyber Grey/ultimate side cyber grey.jpeg',        red: 'red/ultimate side red.jpeg'        },
+  },
+  nline: {
+    'front':     { ecotronic: 'Ecotronic/n line front ecotronic.jpeg',         cyber: 'Cyber Grey/n line front cyber grey.jpeg',         red: 'red/n line front red.jpeg'         },
+    'front-side':{ ecotronic: 'Ecotronic/n line front side ecotronic.jpeg',    cyber: 'Cyber Grey/n line front side cyber grey.jpeg',    red: 'red/n line front side red.jpeg'    },
+    'side':      { ecotronic: 'Ecotronic/n line side ecotronic.jpeg',          cyber: 'Cyber Grey/n line side cyber grey.jpeg',          red: 'red/n line side red.jpeg'          },
+    'rear-side': { ecotronic: 'Ecotronic/n line rear side ecotronic.jpeg',     cyber: 'Cyber Grey/n line rear side cyber grey.jpeg',     red: 'red/n line rear side red.jpeg'     },
+    'rear':      { ecotronic: 'Ecotronic/n line rear ecotronic.jpeg',          cyber: 'Cyber Grey/n line rear cyber grey.jpeg',          red: 'red/n line rear red.jpeg'          },
+    'dash':      { ecotronic: 'n line dash.jpeg',    cyber: 'n line dash.jpeg',    red: 'n line dash.jpeg'    },
+    'seats':     { ecotronic: 'n line seats.jpeg',   cyber: 'n line seats.jpeg',   red: 'n line seats.jpeg'   },
+    'specs':     { ecotronic: 'Ecotronic/n line side ecotronic.jpeg',          cyber: 'Cyber Grey/n line side cyber grey.jpeg',          red: 'red/n line side red.jpeg'          },
+  },
+  n: {
+    'front':     { ecotronic: 'Ecotronic/n front ecotronic zoom.jpeg',         cyber: 'Cyber Grey/n front cyber grey zoom.jpeg',         red: 'red/n front red zoom.jpeg'         },
+    'front-side':{ ecotronic: 'Ecotronic/n front side ecotronic.jpeg',         cyber: 'Cyber Grey/n front side cyber grey.jpeg',         red: 'red/n front side red.jpeg'         },
+    'side':      { ecotronic: 'Ecotronic/n side ecotronic.jpeg',               cyber: 'Cyber Grey/n side cyber grey.jpeg',               red: 'red/n side red.jpeg'               },
+    'rear-side': { ecotronic: 'Ecotronic/n back side ecotronic.jpeg',          cyber: 'Cyber Grey/n back side cyber grey.jpeg',          red: 'red/n back side red.jpeg'          },
+    'rear':      { ecotronic: 'Ecotronic/n rear ecotronic.jpeg',               cyber: 'Cyber Grey/n rear cyber grey.jpeg',               red: 'red/n rear red.jpeg'               },
+    'dash':      { ecotronic: 'n dash.jpeg',         cyber: 'n dash.jpeg',         red: 'n dash.jpeg'         },
+    'seats':     { ecotronic: 'n seats.jpeg',        cyber: 'n seats.jpeg',        red: 'n seats.jpeg'        },
+    'specs':     { ecotronic: 'Ecotronic/n side ecotronic.jpeg',               cyber: 'Cyber Grey/n side cyber grey.jpeg',               red: 'red/n side red.jpeg'               },
+  },
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
 let currentView   = 0;
 let currentColour = 'ecotronic';
+let compareMode   = 'models';
+let pickedModel   = 'ultimate';
 let isAnimating   = false;
+let lbPanelIdx    = 0;
+let lbAnimating   = false;
 
-// Lightbox state
-let lbModelIdx   = 0;
-let lbAnimating  = false;
+// ── AVAILABLE VIEWS ───────────────────────────────────────────────────────────
+function getAvailableViews() {
+  return VIEWS.filter(v => {
+    if (compareMode === 'colours' && (v.interior || v.modelsOnly)) return false;
+    return true;
+  });
+}
+
+// ── PANELS ────────────────────────────────────────────────────────────────────
+function getPanels() {
+  if (compareMode === 'models') {
+    return MODELS.map(m => ({
+      id: m.id, label: m.name,
+      getImage: (viewKey, colour) => images[m.id][viewKey][colour],
+    }));
+  }
+  return COLOURS.map(c => {
+    const is5n  = pickedModel === 'n';
+    const label = (is5n && c.name5n) ? c.name5n : c.name;
+    return {
+      id: `colour-${c.key}`, label,
+      getImage: (viewKey) => images[pickedModel][viewKey][c.key],
+    };
+  });
+}
 
 // ── BUILD ──────────────────────────────────────────────────────────────────────
-function init() {
-  const grid = document.getElementById('comparison');
+function buildPanels() {
+  const grid   = document.getElementById('comparison');
+  const panels = getPanels();
   grid.innerHTML = '';
 
-  MODELS.forEach((model, idx) => {
+  panels.forEach((panel, idx) => {
     const isMiddle = idx === 1;
-    const panel = document.createElement('div');
-    panel.className = 'model-panel';
-    panel.id = `panel-${model.id}`;
+    const modelId  = MODELS[idx] ? MODELS[idx].id : null;
+    const spec     = modelId ? SPECS[modelId] : null;
 
-    panel.innerHTML = `
-      <div class="model-header">
-        <div class="model-name">${model.name}</div>
+    const el = document.createElement('div');
+    el.className = 'model-panel';
+    el.id = `panel-${idx}`;
+
+    const specsHtml = spec ? `
+      <div class="specs-overlay" id="specs-${idx}">
+        <div class="specs-grade">${spec.grade} Specification</div>
+        <div class="specs-heading">${spec.heading}</div>
+        <ul class="specs-list">
+          ${spec.items.map(i => `<li>${i}</li>`).join('')}
+        </ul>
       </div>
-      <div class="image-wrap" id="wrap-${model.id}">
+    ` : '';
+
+    el.innerHTML = `
+      <div class="image-wrap" id="wrap-${idx}">
+        <div class="panel-label" id="plabel-${idx}">${panel.label}</div>
+        <img class="panel-logo" src="hyundailogo.png" alt="">
         ${isMiddle ? `
           <button class="panel-arrow panel-arrow-left" id="btnPrev" onclick="changeView(-1)" aria-label="Previous">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -380,50 +457,75 @@ function init() {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
         ` : ''}
-        <img class="car-img" id="img-${model.id}" src="" alt="${model.name}" draggable="false"
-             onclick="openLightbox(${idx})">
-        <div class="missing-placeholder" id="missing-${model.id}" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="21" x2="21" y2="3"/>
-          </svg>
+        <img class="car-img" id="img-${idx}" src="" alt="${panel.label}" draggable="false" onclick="openLightbox(${idx})">
+        <div class="missing-placeholder" id="missing-${idx}" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="21" x2="21" y2="3"/></svg>
           <p>Image not available</p>
         </div>
+        ${specsHtml}
       </div>
     `;
-    grid.appendChild(panel);
+    grid.appendChild(el);
   });
 
-  // Build lightbox dots
+  rebuildLbDots();
+}
+
+function rebuildLbDots() {
   const dotsEl = document.getElementById('lb-dots');
-  MODELS.forEach((m, i) => {
+  dotsEl.innerHTML = '';
+  getPanels().forEach((_, i) => {
     const dot = document.createElement('div');
     dot.className = 'lb-dot' + (i === 0 ? ' active' : '');
     dot.onclick = () => lbGoto(i);
     dotsEl.appendChild(dot);
   });
-
-  render();
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
 function render() {
-  const view = VIEWS[currentView];
+  const view   = VIEWS[currentView];
+  const panels = getPanels();
+  const isSpecs = view.key === 'specs';
+
+  // Both arrows always enabled — full circular navigation
   const prev = document.getElementById('btnPrev');
   const next = document.getElementById('btnNext');
-  if (prev) prev.disabled = currentView === 0;
-  if (next) next.disabled = currentView === VIEWS.length - 1;
+  if (prev) prev.disabled = false;
+  if (next) next.disabled = false;
 
-  MODELS.forEach(model => {
-    const filename = images[model.id][view.key][currentColour];
-    const img      = document.getElementById(`img-${model.id}`);
-    const missing  = document.getElementById(`missing-${model.id}`);
-    if (filename) {
-      img.style.display = 'block';
+  panels.forEach((panel, idx) => {
+    const filename = compareMode === 'models'
+      ? panel.getImage(view.key, currentColour)
+      : panel.getImage(view.key);
+
+    const img     = document.getElementById(`img-${idx}`);
+    const missing = document.getElementById(`missing-${idx}`);
+    const label   = document.getElementById(`plabel-${idx}`);
+    const specs   = document.getElementById(`specs-${idx}`);
+
+    if (label) label.textContent = panel.label;
+
+    // Specs view: show dimmed side image + specs overlay
+    if (isSpecs && specs) {
+      img.classList.add('dimmed');
+      img.style.display     = 'block';
       missing.style.display = 'none';
-      img.src = filename;
+      img.src = filename || '';
+      img.style.cursor = 'default';
+      specs.classList.add('visible');
     } else {
-      img.style.display = 'none';
-      missing.style.display = 'flex';
+      img.classList.remove('dimmed');
+      img.style.cursor = 'zoom-in';
+      if (specs) specs.classList.remove('visible');
+      if (filename) {
+        img.style.display     = 'block';
+        missing.style.display = 'none';
+        img.src = filename;
+      } else {
+        img.style.display     = 'none';
+        missing.style.display = 'flex';
+      }
     }
   });
 }
@@ -455,10 +557,18 @@ function animateTransition(direction, callback) {
   return true;
 }
 
+// ── CONTROLS ──────────────────────────────────────────────────────────────────
 function changeView(delta) {
-  const next = currentView + delta;
-  if (next < 0 || next >= VIEWS.length) return;
-  animateTransition(delta, () => { currentView = next; render(); });
+  const views = getAvailableViews();
+  const currentKey = VIEWS[currentView].key;
+  let availIdx = views.findIndex(v => v.key === currentKey);
+  if (availIdx === -1) availIdx = 0;
+  let nextIdx = availIdx + delta;
+  // Full circular — both directions
+  if (nextIdx >= views.length) nextIdx = 0;
+  if (nextIdx < 0)             nextIdx = views.length - 1;
+  const nextViewIdx = VIEWS.findIndex(v => v.key === views[nextIdx].key);
+  animateTransition(delta, () => { currentView = nextViewIdx; render(); });
 }
 
 function setColour(colour) {
@@ -473,60 +583,77 @@ function setColour(colour) {
   }, 150);
 }
 
+function setMode(mode) {
+  if (mode === compareMode) return;
+  compareMode = mode;
+  document.querySelectorAll('.compare-tab').forEach(t => t.classList.toggle('active', t.textContent.toLowerCase() === mode));
+  document.getElementById('modelPicker').classList.toggle('visible', mode === 'colours');
+  // Reset to front if current view isn't available in new mode
+  const avail = getAvailableViews();
+  if (!avail.find(v => v.key === VIEWS[currentView].key)) currentView = 0;
+  buildPanels();
+  render();
+}
+
+function setPickedModel(modelId) {
+  pickedModel = modelId;
+  document.querySelectorAll('.model-pill').forEach(p => p.classList.toggle('active', p.dataset.model === modelId));
+  const imgs = document.querySelectorAll('.car-img');
+  imgs.forEach(img => { img.style.transition = 'opacity 0.17s ease'; img.style.opacity = '0'; });
+  setTimeout(() => {
+    render();
+    imgs.forEach(img => { img.style.opacity = '1'; setTimeout(() => { img.style.transition = ''; }, 220); });
+  }, 150);
+}
+
 // ── LIGHTBOX ──────────────────────────────────────────────────────────────────
 function lbRender() {
-  const model    = MODELS[lbModelIdx];
-  const view     = VIEWS[currentView];
-  const filename = images[model.id][view.key][currentColour];
-
-  document.getElementById('lightbox-model').textContent = model.name;
-
+  const panels = getPanels();
+  const panel  = panels[lbPanelIdx];
+  const view   = VIEWS[currentView];
+  // Don't open lightbox on specs view
+  const filename = compareMode === 'models'
+    ? panel.getImage(view.key, currentColour)
+    : panel.getImage(view.key);
+  document.getElementById('lightbox-model').textContent = panel.label;
   const img = document.getElementById('lightbox-img');
   img.src = filename || '';
   img.style.visibility = filename ? 'visible' : 'hidden';
-
-  document.getElementById('lb-prev').disabled = lbModelIdx === 0;
-  document.getElementById('lb-next').disabled = lbModelIdx === MODELS.length - 1;
-
-  document.querySelectorAll('.lb-dot').forEach((d, i) => {
-    d.classList.toggle('active', i === lbModelIdx);
-  });
+  document.getElementById('lb-prev').disabled = lbPanelIdx === 0;
+  document.getElementById('lb-next').disabled = lbPanelIdx === panels.length - 1;
+  document.querySelectorAll('.lb-dot').forEach((d, i) => d.classList.toggle('active', i === lbPanelIdx));
 }
 
-function openLightbox(modelIdx) {
-  lbModelIdx = modelIdx;
+function openLightbox(panelIdx) {
+  if (VIEWS[currentView].key === 'specs') return; // no lightbox on specs
+  lbPanelIdx = panelIdx;
   lbRender();
   document.getElementById('lightbox').classList.add('open');
 }
 
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
 
 function lbNavigate(delta) {
-  const next = lbModelIdx + delta;
-  if (next < 0 || next >= MODELS.length || lbAnimating) return;
+  const panels = getPanels();
+  const next = lbPanelIdx + delta;
+  if (next < 0 || next >= panels.length || lbAnimating) return;
   lbAnimating = true;
   const img = document.getElementById('lightbox-img');
   img.classList.add('fading');
   setTimeout(() => {
-    lbModelIdx = next;
+    lbPanelIdx = next;
     lbRender();
     img.classList.remove('fading');
     setTimeout(() => { lbAnimating = false; }, 220);
   }, 200);
 }
 
-function lbGoto(idx) {
-  if (idx === lbModelIdx) return;
-  lbNavigate(idx > lbModelIdx ? 1 : -1);
-  // For multi-step jumps, recurse after animation
-}
+function lbGoto(idx) { if (idx !== lbPanelIdx) lbNavigate(idx > lbPanelIdx ? 1 : -1); }
 
 // ── INPUT ─────────────────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
   const lbOpen = document.getElementById('lightbox').classList.contains('open');
-  if (e.key === 'Escape')     { closeLightbox(); return; }
+  if (e.key === 'Escape') { closeLightbox(); return; }
   if (lbOpen) {
     if (e.key === 'ArrowLeft')  lbNavigate(-1);
     if (e.key === 'ArrowRight') lbNavigate(1);
@@ -535,18 +662,14 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight') changeView(1);
     if (e.key === '1') setColour('ecotronic');
     if (e.key === '2') setColour('cyber');
+    if (e.key === '3') setColour('red');
   }
 });
 
-// Click backdrop to close lightbox
 document.getElementById('lightbox').addEventListener('click', e => {
-  if (e.target === document.getElementById('lightbox') ||
-      e.target === document.getElementById('lightbox-img')) {
-    closeLightbox();
-  }
+  if (e.target === document.getElementById('lightbox') || e.target === document.getElementById('lightbox-img')) closeLightbox();
 });
 
-// Touch swipe
 let tx = null;
 document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
 document.addEventListener('touchend', e => {
@@ -554,14 +677,12 @@ document.addEventListener('touchend', e => {
   const dx = e.changedTouches[0].clientX - tx;
   tx = null;
   if (Math.abs(dx) < 48) return;
-  if (document.getElementById('lightbox').classList.contains('open')) {
-    lbNavigate(dx < 0 ? 1 : -1);
-  } else {
-    changeView(dx < 0 ? 1 : -1);
-  }
+  if (document.getElementById('lightbox').classList.contains('open')) lbNavigate(dx < 0 ? 1 : -1);
+  else changeView(dx < 0 ? 1 : -1);
 }, { passive: true });
 
-init();
+buildPanels();
+render();
 </script>
 </body>
 </html>
