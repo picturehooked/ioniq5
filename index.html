@@ -221,7 +221,8 @@
     .colour-card { padding: 7px 10px; }
     .colour-card-name { font-size: 11px; }
     .colour-card-name2 { font-size: 9px; }
-    .comparison { flex-direction: column; padding: 0 12px 10px; gap: 6px; }
+    .comparison { flex-direction: column; padding: 0 12px 10px; gap: 6px; overflow: visible; }
+    .model-panel { flex: 1 1 0; }
     .specs-heading { font-size: 13px; margin-bottom: 8px; }
     .specs-list li { font-size: 10px; gap: 5px; }
     .specs-list li::before { font-size: 6px; margin-top: 3px; }
@@ -250,7 +251,7 @@
     </div>
     <div class="colour-card red-card" data-colour="red" onclick="setColour('red')">
       <div class="active-tick"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
-      <div class="colour-card-name">Ultimate Red Metallic</div>
+      <div class="colour-card-name">Ult Red Metallic</div>
       <div class="colour-card-name2">Soultronic Orange Pearl (5 N)</div>
     </div>
   </div>
@@ -320,8 +321,8 @@ const SPECS = {
       'Full leather seats',
       'Digital Key / Head-up display',
       'Full colour range, red standard',
-      'Zen Pack (opt)',
-      'Tech Pack (opt)',
+      'Zen Pack (opt): memory seats, vision roof',
+      'Tech Pack (opt): park assist, surround-view monitors',
     ],
   },
   nline: {
@@ -330,7 +331,7 @@ const SPECS = {
     items: [
       '20" alloy wheels, upgraded design',
       'Leather & alcantara panel seats',
-      'Zen & Tech Pack options included as standard',
+      'Zen & Tech Packs included as standard',
       'Restricted colour range, no teal or blue',
     ],
   },
@@ -443,7 +444,7 @@ function buildPanels() {
     el.innerHTML = `
       <div class="image-wrap" id="wrap-${idx}">
         <div class="panel-label" id="plabel-${idx}">${panel.label}</div>
-        <img class="panel-logo" src="hyundailogo.png" alt="">
+        <img class="panel-logo" id="logo-${idx}" src="hyundailogo.png" alt="">
         ${isMiddle ? `
           <button class="panel-arrow panel-arrow-left" id="btnPrev" onclick="changeView(-1)" aria-label="Previous">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -499,10 +500,12 @@ function render() {
     const label   = document.getElementById(`plabel-${idx}`);
     const specs   = document.getElementById(`specs-${idx}`);
 
+    const logo = document.getElementById(`logo-${idx}`);
     if (label) {
       label.textContent = panel.label;
       label.style.display = isSpecs ? 'none' : '';
     }
+    if (logo) logo.style.display = isSpecs ? 'none' : '';
 
     // Specs view: show dimmed side image + specs overlay
     if (isSpecs && specs) {
@@ -591,6 +594,11 @@ function setMode(mode) {
   if (!avail.find(v => v.key === VIEWS[currentView].key)) currentView = 0;
   buildPanels();
   render();
+  // Force layout recalculation — fixes mobile flex column not distributing panels
+  const grid = document.getElementById('comparison');
+  grid.style.display = 'none';
+  grid.offsetHeight;
+  grid.style.display = '';
 }
 
 function setPickedModel(modelId) {
