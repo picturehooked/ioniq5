@@ -265,8 +265,8 @@
   <div class="compare-bar">
     <span class="compare-label">Compare</span>
     <div class="compare-toggle">
-      <div class="compare-tab active" onclick="setMode('models')">Models</div>
-      <div class="compare-tab" onclick="setMode('colours')">Colours</div>
+      <div class="compare-tab active" data-mode="models" onclick="setMode('models')">Colours</div>
+      <div class="compare-tab" data-mode="colours" onclick="setMode('colours')">Trim / Model</div>
     </div>
   </div>
   <div id="selectorArea"></div>
@@ -620,7 +620,7 @@ function setColour(colour) {
 function setMode(mode) {
   if (mode === compareMode) return;
   compareMode = mode;
-  document.querySelectorAll('.compare-tab').forEach(t => t.classList.toggle('active', t.textContent.toLowerCase() === mode));
+  document.querySelectorAll('.compare-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
   // Reset to front if current view isn't available in new mode
   const avail = getAvailableViews();
   if (!avail.find(v => v.key === VIEWS[currentView].key)) currentView = 0;
