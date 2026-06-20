@@ -35,8 +35,25 @@
   .brand-title { font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text); }
   .brand-year  { font-size: 12px; font-weight: 400; letter-spacing: 0.06em; color: var(--text-muted); }
 
+  /* ── SELECTOR AREA (colour slates or model slates) ── */
+  #selectorArea { display: flex; gap: 8px; }
+
+  /* Model slates */
+  .model-slate {
+    flex: 1; padding: 9px 12px; min-height: 44px;
+    border-radius: var(--radius); border: 1.5px solid rgba(255,255,255,0.07);
+    cursor: pointer; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    transition: border-color 0.25s, transform 0.15s; user-select: none;
+  }
+  .model-slate:hover { transform: translateY(-1px); }
+  .model-slate.active { border-color: rgba(200,169,110,0.55); box-shadow: 0 0 0 1px rgba(200,169,110,0.15); }
+  .model-slate-ultimate { background: linear-gradient(145deg, #1e2535 0%, #151a28 100%); }
+  .model-slate-nline    { background: linear-gradient(145deg, #202028 0%, #15151e 100%); }
+  .model-slate-n        { background: linear-gradient(145deg, #281c1c 0%, #1a1212 100%); }
+  .model-slate-name { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.82); letter-spacing: 0.04em; }
+
   /* ── COLOUR SLATES ── */
-  .colour-selector { display: flex; gap: 8px; }
   .colour-card {
     flex: 1; padding: 9px 12px;
     border-radius: var(--radius); border: 2px solid transparent;
@@ -69,11 +86,16 @@
   .active-tick svg { width: 7px; height: 7px; color: #fff; }
 
   /* ── COMPARE BAR ── */
-  .compare-bar { display: flex; align-items: center; gap: 6px; }
-  .compare-label { font-size: 12px; font-weight: 700; color: var(--text); letter-spacing: 0.16em; text-transform: uppercase; margin-right: 2px; }
+  .compare-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .compare-label { font-size: 12px; font-weight: 700; color: var(--text); letter-spacing: 0.16em; text-transform: uppercase; }
+  .compare-toggle {
+    display: flex; gap: 2px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 22px; padding: 2px;
+  }
   .compare-tab {
-    font-size: 11px; font-weight: 600; color: var(--text-muted);
-    padding: 3px 10px; border-radius: 20px; cursor: pointer;
+    font-size: 12px; font-weight: 600; color: var(--text-muted);
+    padding: 5px 16px; border-radius: 20px; cursor: pointer;
     border: 1px solid transparent;
     transition: color 0.2s, background 0.2s, border-color 0.2s; user-select: none;
   }
@@ -240,31 +262,14 @@
     <span class="brand-title">Hyundai Ioniq 5</span>
     <span class="brand-year">· 2026 Current Model</span>
   </div>
-  <div class="colour-selector">
-    <div class="colour-card ecotronic-card active" data-colour="ecotronic" onclick="setColour('ecotronic')">
-      <div class="active-tick"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
-      <div class="colour-card-name">Ecotronic Grey Pearl</div>
-    </div>
-    <div class="colour-card cyber-card" data-colour="cyber" onclick="setColour('cyber')">
-      <div class="active-tick"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
-      <div class="colour-card-name">Cyber Grey Metallic</div>
-    </div>
-    <div class="colour-card red-card" data-colour="red" onclick="setColour('red')">
-      <div class="active-tick"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg></div>
-      <div class="colour-card-name">Ult Red Metallic</div>
-      <div class="colour-card-name2">Soultronic Orange Pearl (5 N)</div>
-    </div>
-  </div>
   <div class="compare-bar">
     <span class="compare-label">Compare</span>
-    <div class="compare-tab active" onclick="setMode('models')">Models</div>
-    <div class="compare-tab" onclick="setMode('colours')">Colours</div>
-    <div class="model-picker" id="modelPicker">
-      <div class="model-pill active" data-model="ultimate" onclick="setPickedModel('ultimate')">Ultimate</div>
-      <div class="model-pill" data-model="nline" onclick="setPickedModel('nline')">N Line S</div>
-      <div class="model-pill" data-model="n" onclick="setPickedModel('n')">5 N</div>
+    <div class="compare-toggle">
+      <div class="compare-tab active" onclick="setMode('models')">Models</div>
+      <div class="compare-tab" onclick="setMode('colours')">Colours</div>
     </div>
   </div>
+  <div id="selectorArea"></div>
 </header>
 
 <div class="comparison" id="comparison"></div>
@@ -286,6 +291,9 @@
 <div class="key-hint">← → angle · tap image to expand</div>
 
 <script>
+// ── CONSTANTS ─────────────────────────────────────────────────────────────────
+const TICK_SVG = `<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg>`;
+
 // ── DATA ──────────────────────────────────────────────────────────────────────
 
 const VIEWS = [
@@ -309,7 +317,7 @@ const MODELS = [
 const COLOURS = [
   { key: 'ecotronic', name: 'Ecotronic Grey Pearl',  name5n: null },
   { key: 'cyber',     name: 'Cyber Grey Metallic',   name5n: null },
-  { key: 'red',       name: 'Ultimate Red Metallic', name5n: 'Soultronic Orange Pearl' },
+  { key: 'red',       name: 'Ult Red Metallic',      name5n: 'Soultronic Orange Pearl' },
 ];
 
 const SPECS = {
@@ -394,7 +402,8 @@ let lbAnimating   = false;
 // ── AVAILABLE VIEWS ───────────────────────────────────────────────────────────
 function getAvailableViews() {
   return VIEWS.filter(v => {
-    if (compareMode === 'colours' && (v.interior || v.modelsOnly)) return false;
+    // Models mode = 1 model / 3 colours: exclude interior (same image 3×) and specs
+    if (compareMode === 'models' && (v.interior || v.modelsOnly)) return false;
     return true;
   });
 }
@@ -402,19 +411,46 @@ function getAvailableViews() {
 // ── PANELS ────────────────────────────────────────────────────────────────────
 function getPanels() {
   if (compareMode === 'models') {
-    return MODELS.map(m => ({
-      id: m.id, label: m.name,
-      getImage: (viewKey, colour) => images[m.id][viewKey][colour],
-    }));
+    // One model (pickedModel) shown in 3 colours — panels labelled with colour names
+    return COLOURS.map(c => {
+      const label = (pickedModel === 'n' && c.name5n) ? c.name5n : c.name;
+      return {
+        id: `colour-${c.key}`, label,
+        modelId: pickedModel,
+        getImage: (viewKey) => images[pickedModel][viewKey][c.key],
+      };
+    });
   }
-  return COLOURS.map(c => {
-    const is5n  = pickedModel === 'n';
-    const label = (is5n && c.name5n) ? c.name5n : c.name;
-    return {
-      id: `colour-${c.key}`, label,
-      getImage: (viewKey) => images[pickedModel][viewKey][c.key],
-    };
-  });
+  // One colour (currentColour) shown across 3 models — panels labelled with model names
+  return MODELS.map(m => ({
+    id: m.id, label: m.name,
+    modelId: m.id,
+    getImage: (viewKey) => images[m.id][viewKey][currentColour],
+  }));
+}
+
+// ── SELECTOR AREA ─────────────────────────────────────────────────────────────
+function renderSelector() {
+  const area = document.getElementById('selectorArea');
+  if (compareMode === 'models') {
+    // Show model slates; clicking one sets pickedModel for colours mode
+    area.innerHTML = MODELS.map(m => `
+      <div class="model-slate model-slate-${m.id}${pickedModel === m.id ? ' active' : ''}"
+           onclick="setPickedModel('${m.id}')">
+        <div class="model-slate-name">${m.name}</div>
+      </div>
+    `).join('');
+  } else {
+    // Show colour slates
+    area.innerHTML = COLOURS.map(c => `
+      <div class="colour-card ${c.key}-card${currentColour === c.key ? ' active' : ''}"
+           data-colour="${c.key}" onclick="setColour('${c.key}')">
+        <div class="active-tick">${TICK_SVG}</div>
+        <div class="colour-card-name">${c.name}</div>
+        ${c.name5n ? `<div class="colour-card-name2">${c.name5n} (5 N)</div>` : ''}
+      </div>
+    `).join('');
+  }
 }
 
 // ── BUILD ──────────────────────────────────────────────────────────────────────
@@ -425,8 +461,7 @@ function buildPanels() {
 
   panels.forEach((panel, idx) => {
     const isMiddle = idx === 1;
-    const modelId  = MODELS[idx] ? MODELS[idx].id : null;
-    const spec     = modelId ? SPECS[modelId] : null;
+    const spec     = panel.modelId ? SPECS[panel.modelId] : null;
 
     const el = document.createElement('div');
     el.className = 'model-panel';
@@ -491,9 +526,7 @@ function render() {
   if (next) next.disabled = false;
 
   panels.forEach((panel, idx) => {
-    const filename = compareMode === 'models'
-      ? panel.getImage(view.key, currentColour)
-      : panel.getImage(view.key);
+    const filename = panel.getImage(view.key);
 
     const img     = document.getElementById(`img-${idx}`);
     const missing = document.getElementById(`missing-${idx}`);
@@ -588,10 +621,10 @@ function setMode(mode) {
   if (mode === compareMode) return;
   compareMode = mode;
   document.querySelectorAll('.compare-tab').forEach(t => t.classList.toggle('active', t.textContent.toLowerCase() === mode));
-  document.getElementById('modelPicker').classList.toggle('visible', mode === 'colours');
   // Reset to front if current view isn't available in new mode
   const avail = getAvailableViews();
   if (!avail.find(v => v.key === VIEWS[currentView].key)) currentView = 0;
+  renderSelector();
   buildPanels();
   render();
   // Force layout recalculation — fixes mobile flex column not distributing panels
@@ -603,7 +636,9 @@ function setMode(mode) {
 
 function setPickedModel(modelId) {
   pickedModel = modelId;
-  document.querySelectorAll('.model-pill').forEach(p => p.classList.toggle('active', p.dataset.model === modelId));
+  // Update model slate active state
+  document.querySelectorAll('.model-slate').forEach(s => s.classList.toggle('active', s.classList.contains(`model-slate-${modelId}`)));
+  // Always re-render panels (models mode shows the newly picked model in 3 colours)
   const imgs = document.querySelectorAll('.car-img');
   imgs.forEach(img => { img.style.transition = 'opacity 0.17s ease'; img.style.opacity = '0'; });
   setTimeout(() => {
@@ -618,9 +653,7 @@ function lbRender() {
   const panel  = panels[lbPanelIdx];
   const view   = VIEWS[currentView];
   // Don't open lightbox on specs view
-  const filename = compareMode === 'models'
-    ? panel.getImage(view.key, currentColour)
-    : panel.getImage(view.key);
+  const filename = panel.getImage(view.key);
   document.getElementById('lightbox-model').textContent = panel.label;
   const img = document.getElementById('lightbox-img');
   img.src = filename || '';
@@ -687,6 +720,7 @@ document.addEventListener('touchend', e => {
   else changeView(dx < 0 ? 1 : -1);
 }, { passive: true });
 
+renderSelector();
 buildPanels();
 render();
 </script>
