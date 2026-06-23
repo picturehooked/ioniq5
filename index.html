@@ -133,14 +133,16 @@
   }
   .car-img.dimmed { filter: brightness(0.25) blur(1px); }
 
-  /* Panel label pill — position set by JS positionOverlays() */
+  /* Panel label — positioned by JS positionOverlays(), sits at bottom of image content */
   .panel-label {
-    position: absolute; top: 14px; left: 14px; transform: none;
-    z-index: 4; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
-    padding: 3px 12px; font-size: 12px; font-weight: 700; color: var(--text);
+    position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); top: auto;
+    z-index: 4; background: none; backdrop-filter: none;
+    border: none; border-radius: 0;
+    padding: 2px 4px; font-size: 12px; font-weight: 700; color: #111;
     white-space: nowrap; letter-spacing: 0.02em;
   }
+  /* Interior images have dark backgrounds — keep label white */
+  .panel-label.label-interior { color: #fff; }
 
   /* Hyundai logo — position set by JS positionOverlays() */
   .panel-logo {
@@ -154,10 +156,22 @@
     font-size: 9px; font-weight: 500; opacity: 0.75; margin-left: 5px;
   }
 
-  /* Compact colour cards in 2×2 grid — same total height as one model-slate row */
+  /* Compact colour cards in 2×2 grid */
   .colour-card-grid { padding: 5px 10px; min-height: 0; }
   .colour-card-grid .colour-card-name { font-size: 11px; }
-  .colour-card-grid .colour-card-name2 { font-size: 9px; margin-top: 1px; }
+
+  /* Colour swatches — shown in Colours mode below model slates */
+  .colour-swatches-row { display: flex; gap: 6px; margin-top: 6px; }
+  .colour-swatch {
+    flex: 1; padding: 5px 8px; border-radius: var(--radius);
+    border: 1.5px solid transparent; cursor: pointer; user-select: none;
+    opacity: 0.4; transition: border-color 0.2s, opacity 0.2s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .colour-swatch.swatch-active { border-color: rgba(255,255,255,0.5); opacity: 1; }
+  .swatch-name { font-size: 10px; font-weight: 700; color: #fff; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+  .swatch-tick { flex-shrink: 0; width: 12px; height: 12px; }
 
   .missing-placeholder {
     position: absolute; inset: 0; display: flex; flex-direction: column;
@@ -411,6 +425,9 @@ let pickedModel   = 'ultimate';
 let isAnimating   = false;
 let lbPanelIdx    = 0;
 let lbAnimating   = false;
+// Which 3 colours are shown in Colours mode (max 3); tracked in activation order for LRU swap
+let activeColours     = ['black', 'ecotronic', 'cyber'];
+let colourActivation  = ['black', 'ecotronic', 'cyber']; // LRU order: oldest first
 
 // ── AVAILABLE VIEWS ───────────────────────────────────────────────────────────
 function getAvailableViews() {
@@ -424,8 +441,8 @@ function getAvailableViews() {
 // ── PANELS ────────────────────────────────────────────────────────────────────
 function getPanels() {
   if (compareMode === 'models') {
-    // One model (pickedModel) shown in all colours — panels labelled with colour names
-    return COLOURS.map(c => {
+    // Picked model shown in the 3 active colours — panels labelled with colour names
+    return COLOURS.filter(c => activeColours.includes(c.key)).map(c => {
       const label = (pickedModel === 'n' && c.name5n) ? c.name5n : c.name;
       return {
         id: `colour-${c.key}`, label,
@@ -444,30 +461,60 @@ function getPanels() {
   }));
 }
 
+// ── COLOUR SWATCH TOGGLE (Colours mode) ───────────────────────────────────────
+// Max 3 active. Clicking an inactive swatch swaps out the LRU active colour.
+function toggleActiveColour(key) {
+  if (activeColours.includes(key)) return; // already active — no deselect (keep 3)
+  // Remove oldest activated colour
+  const evict = colourActivation.shift();
+  activeColours = activeColours.filter(k => k !== evict);
+  // Add new colour
+  activeColours.push(key);
+  colourActivation.push(key);
+  renderSelector();
+  buildPanels();
+  render();
+}
+
 // ── SELECTOR AREA ─────────────────────────────────────────────────────────────
 function renderSelector() {
   const area = document.getElementById('selectorArea');
   if (compareMode === 'models') {
-    // Flex row of model slates
+    // Flex column: model slate row + colour swatch row (pick which 3 of 4 to show)
     area.style.display = 'flex';
+    area.style.flexDirection = 'column';
     area.style.gridTemplateColumns = '';
-    area.style.gap = '8px';
-    area.innerHTML = MODELS.map(m => `
-      <div class="model-slate model-slate-${m.id}${pickedModel === m.id ? ' active' : ''}"
-           onclick="setPickedModel('${m.id}')">
-        <div class="model-slate-name">${m.name}</div>
+    area.style.gap = '6px';
+    area.innerHTML = `
+      <div style="display:flex;gap:8px">
+        ${MODELS.map(m => `
+          <div class="model-slate model-slate-${m.id}${pickedModel === m.id ? ' active' : ''}"
+               onclick="setPickedModel('${m.id}')">
+            <div class="model-slate-name">${m.name}</div>
+          </div>
+        `).join('')}
       </div>
-    `).join('');
+      <div class="colour-swatches-row">
+        ${COLOURS.map(c => {
+          const on = activeColours.includes(c.key);
+          return `<div class="colour-swatch ${c.key}-card${on ? ' swatch-active' : ''}"
+                       onclick="toggleActiveColour('${c.key}')">
+            <span class="swatch-name">${c.name}</span>
+            ${on ? `<svg class="swatch-tick" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg>` : ''}
+          </div>`;
+        }).join('')}
+      </div>`;
   } else {
     // 2×2 grid of colour slates — same total height as one row of model slates
     area.style.display = 'grid';
+    area.style.flexDirection = '';
     area.style.gridTemplateColumns = '1fr 1fr';
     area.style.gap = '6px';
     area.innerHTML = COLOURS.map(c => `
       <div class="colour-card colour-card-grid ${c.key}-card${currentColour === c.key ? ' active' : ''}"
            data-colour="${c.key}" onclick="setColour('${c.key}')">
         <div class="active-tick">${TICK_SVG}</div>
-        <div class="colour-card-name">${c.name}${c.name5n ? `<span class="colour-card-name2-inline">· ${c.name5n} (5 N)</span>` : ''}</div>
+        <div class="colour-card-name">${c.name}${c.name5n ? `<span class="colour-card-name2-inline">· ${c.name5n} 5 N</span>` : ''}</div>
       </div>
     `).join('');
   }
@@ -554,8 +601,18 @@ function positionOverlays(idx) {
   const oy     = (availH - rh) / 2 + pad; // top edge of rendered image within wrap
 
   const inset = 10;
-  if (label) { label.style.left = (ox + inset) + 'px'; label.style.top = (oy + inset) + 'px'; }
-  if (logo)  { logo.style.right = (ww - ox - rw + inset) + 'px'; logo.style.left = 'auto'; logo.style.top = (oy + inset) + 'px'; }
+  const imgBottom = wh - (oy + rh); // distance from wrap bottom to image bottom edge
+  if (label) {
+    label.style.left      = (ox + rw / 2) + 'px';
+    label.style.transform = 'translateX(-50%)';
+    label.style.bottom    = (imgBottom + 5) + 'px';
+    label.style.top       = 'auto';
+  }
+  if (logo) {
+    logo.style.right = (ww - ox - rw + inset) + 'px';
+    logo.style.left  = 'auto';
+    logo.style.top   = (oy + inset) + 'px';
+  }
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
@@ -582,6 +639,8 @@ function render() {
     if (label) {
       label.textContent = panel.label;
       label.style.display = isSpecs ? 'none' : '';
+      // Interior images are dark — keep label white; exterior images are white — use black
+      label.classList.toggle('label-interior', view.interior);
     }
     if (logo) logo.style.display = isSpecs ? 'none' : '';
 
