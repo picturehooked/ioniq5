@@ -10,7 +10,7 @@ A static web app comparing the Hyundai Ioniq 5 2026 across three grades and thre
 
 ### Working
 - Three grades: Ultimate · N Line S · 5 N
-- Three colours: Ecotronic Grey Pearl · Cyber Grey Metallic · Ult Red Metallic / Soultronic Orange Pearl (5 N)
+- Four colours: Abyss Black · Ecotronic Grey Pearl · Cyber Grey Metallic · Ult Red Metallic / Soultronic Orange Pearl (5 N)
 - Compare toggle: **Colours** / **Trim / Model** — prominent pill-style segmented control
 - **Colours mode** (internal: `compareMode === 'colours'`): pick a colour slate → all 3 models shown side by side in that colour. Panel labels = model names (Ultimate / N Line S / 5 N). Interior and Specs views included.
 - **Trim / Model mode** (internal: `compareMode === 'models'`): pick a model slate → that model shown in all 3 colours side by side. Panel labels = colour names. Interior and Specs excluded (same image 3×).

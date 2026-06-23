@@ -66,6 +66,7 @@
     border-color: rgba(255,255,255,0.6);
     box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 4px 20px rgba(0,0,0,0.5);
   }
+  .colour-card.black-card     { background: linear-gradient(145deg, #2e2e33 0%, #1a1a1f 40%, #0e0e12 100%); }
   .colour-card.ecotronic-card { background: linear-gradient(145deg, #7a7f78 0%, #5e6359 40%, #444840 100%); }
   .colour-card.cyber-card     { background: linear-gradient(145deg, #d0d4d8 0%, #b0b6bc 40%, #8e9399 100%); }
   .colour-card.red-card       { background: linear-gradient(145deg, #cc3b2a 0%, #a82d1e 40%, #7a1f13 100%); }
@@ -132,21 +133,31 @@
   }
   .car-img.dimmed { filter: brightness(0.25) blur(1px); }
 
-  /* Panel label pill */
+  /* Panel label pill — position set by JS positionOverlays() */
   .panel-label {
-    position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    position: absolute; top: 14px; left: 14px; transform: none;
     z-index: 4; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
     border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
     padding: 3px 12px; font-size: 12px; font-weight: 700; color: var(--text);
     white-space: nowrap; letter-spacing: 0.02em;
   }
 
-  /* Hyundai logo */
+  /* Hyundai logo — position set by JS positionOverlays() */
   .panel-logo {
-    position: absolute; top: 8px; left: 10px; z-index: 4;
+    position: absolute; top: 14px; right: 14px; left: auto; z-index: 4;
     height: 22px; width: auto; opacity: 0.3;
     filter: brightness(0) invert(1); pointer-events: none;
   }
+
+  /* Inline 5N name on colour card */
+  .colour-card-name2-inline {
+    font-size: 9px; font-weight: 500; opacity: 0.75; margin-left: 5px;
+  }
+
+  /* Compact colour cards in 2×2 grid — same total height as one model-slate row */
+  .colour-card-grid { padding: 5px 10px; min-height: 0; }
+  .colour-card-grid .colour-card-name { font-size: 11px; }
+  .colour-card-grid .colour-card-name2 { font-size: 9px; margin-top: 1px; }
 
   .missing-placeholder {
     position: absolute; inset: 0; display: flex; flex-direction: column;
@@ -314,8 +325,9 @@ const MODELS = [
   { id: 'n',        name: '5 N'      },
 ];
 
-// Colour order matches slate order: ecotronic → cyber → red
+// Colour order: black → ecotronic → cyber → red (grid: black TL, ecotronic TR, cyber BL, red BR)
 const COLOURS = [
+  { key: 'black',     name: 'Abyss Black',           name5n: null },
   { key: 'ecotronic', name: 'Ecotronic Grey Pearl',  name5n: null },
   { key: 'cyber',     name: 'Cyber Grey Metallic',   name5n: null },
   { key: 'red',       name: 'Ult Red Metallic',      name5n: 'Soultronic Orange Pearl' },
@@ -360,34 +372,34 @@ const SPECS = {
 // Image map
 const images = {
   ultimate: {
-    'front':     { ecotronic: 'Ecotronic/ultimate front ecotronic.jpeg',      cyber: 'Cyber Grey/ultimate front cyber grey.jpeg',      red: 'red/ultimate front red.jpeg'      },
-    'front-side':{ ecotronic: 'Ecotronic/ultimate front side ecotronic.jpeg',  cyber: 'Cyber Grey/ultimate front side cyber grey.jpeg',  red: 'red/ultimate front side red.jpeg'  },
-    'side':      { ecotronic: 'Ecotronic/ultimate side ecotronic.jpeg',        cyber: 'Cyber Grey/ultimate side cyber grey.jpeg',        red: 'red/ultimate side red.jpeg'        },
-    'rear-side': { ecotronic: 'Ecotronic/ultimate rear side ecotronic.jpeg',   cyber: 'Cyber Grey/ultimate rear side cyber grey.jpeg',   red: 'red/ultimate rear side red.jpeg'   },
-    'rear':      { ecotronic: 'Ecotronic/ultimate rear ecotronic.jpeg',        cyber: 'Cyber Grey/ultimate rear cyber grey.jpeg',        red: 'red/ultimate rear red.jpeg'        },
-    'dash':      { ecotronic: 'ultimate dash.jpeg',  cyber: 'ultimate dash.jpeg',  red: 'ultimate dash.jpeg'  },
-    'seats':     { ecotronic: 'ultimate seats.jpeg', cyber: 'ultimate seats.jpeg', red: 'ultimate seats.jpeg' },
-    'specs':     { ecotronic: 'Ecotronic/ultimate side ecotronic.jpeg',        cyber: 'Cyber Grey/ultimate side cyber grey.jpeg',        red: 'red/ultimate side red.jpeg'        },
+    'front':     { black: 'Black/ultimate front black.jpeg',      ecotronic: 'Ecotronic/ultimate front ecotronic.jpeg',      cyber: 'Cyber Grey/ultimate front cyber grey.jpeg',      red: 'red/ultimate front red.jpeg'      },
+    'front-side':{ black: 'Black/ultimate front side black.jpeg', ecotronic: 'Ecotronic/ultimate front side ecotronic.jpeg',  cyber: 'Cyber Grey/ultimate front side cyber grey.jpeg',  red: 'red/ultimate front side red.jpeg'  },
+    'side':      { black: 'Black/ultimate side black.jpeg',       ecotronic: 'Ecotronic/ultimate side ecotronic.jpeg',        cyber: 'Cyber Grey/ultimate side cyber grey.jpeg',        red: 'red/ultimate side red.jpeg'        },
+    'rear-side': { black: 'Black/ultimate rear side black.jpeg',  ecotronic: 'Ecotronic/ultimate rear side ecotronic.jpeg',   cyber: 'Cyber Grey/ultimate rear side cyber grey.jpeg',   red: 'red/ultimate rear side red.jpeg'   },
+    'rear':      { black: 'Black/ultimate rear black.jpeg',       ecotronic: 'Ecotronic/ultimate rear ecotronic.jpeg',        cyber: 'Cyber Grey/ultimate rear cyber grey.jpeg',        red: 'red/ultimate rear red.jpeg'        },
+    'dash':      { black: 'ultimate dash.jpeg',  ecotronic: 'ultimate dash.jpeg',  cyber: 'ultimate dash.jpeg',  red: 'ultimate dash.jpeg'  },
+    'seats':     { black: 'ultimate seats.jpeg', ecotronic: 'ultimate seats.jpeg', cyber: 'ultimate seats.jpeg', red: 'ultimate seats.jpeg' },
+    'specs':     { black: 'Black/ultimate side black.jpeg',       ecotronic: 'Ecotronic/ultimate side ecotronic.jpeg',        cyber: 'Cyber Grey/ultimate side cyber grey.jpeg',        red: 'red/ultimate side red.jpeg'        },
   },
   nline: {
-    'front':     { ecotronic: 'Ecotronic/n line front ecotronic.jpeg',         cyber: 'Cyber Grey/n line front cyber grey.jpeg',         red: 'red/n line front red.jpeg'         },
-    'front-side':{ ecotronic: 'Ecotronic/n line front side ecotronic.jpeg',    cyber: 'Cyber Grey/n line front side cyber grey.jpeg',    red: 'red/n line front side red.jpeg'    },
-    'side':      { ecotronic: 'Ecotronic/n line side ecotronic.jpeg',          cyber: 'Cyber Grey/n line side cyber grey.jpeg',          red: 'red/n line side red.jpeg'          },
-    'rear-side': { ecotronic: 'Ecotronic/n line rear side ecotronic.jpeg',     cyber: 'Cyber Grey/n line rear side cyber grey.jpeg',     red: 'red/n line rear side red.jpeg'     },
-    'rear':      { ecotronic: 'Ecotronic/n line rear ecotronic.jpeg',          cyber: 'Cyber Grey/n line rear cyber grey.jpeg',          red: 'red/n line rear red.jpeg'          },
-    'dash':      { ecotronic: 'n line dash.jpeg',    cyber: 'n line dash.jpeg',    red: 'n line dash.jpeg'    },
-    'seats':     { ecotronic: 'n line seats.jpeg',   cyber: 'n line seats.jpeg',   red: 'n line seats.jpeg'   },
-    'specs':     { ecotronic: 'Ecotronic/n line side ecotronic.jpeg',          cyber: 'Cyber Grey/n line side cyber grey.jpeg',          red: 'red/n line side red.jpeg'          },
+    'front':     { black: 'Black/n line front black.jpeg',            ecotronic: 'Ecotronic/n line front ecotronic.jpeg',         cyber: 'Cyber Grey/n line front cyber grey.jpeg',         red: 'red/n line front red.jpeg'         },
+    'front-side':{ black: 'Black/n line front side blackl.jpeg',      ecotronic: 'Ecotronic/n line front side ecotronic.jpeg',    cyber: 'Cyber Grey/n line front side cyber grey.jpeg',    red: 'red/n line front side red.jpeg'    },
+    'side':      { black: 'Black/n line side black.jpeg',             ecotronic: 'Ecotronic/n line side ecotronic.jpeg',          cyber: 'Cyber Grey/n line side cyber grey.jpeg',          red: 'red/n line side red.jpeg'          },
+    'rear-side': { black: 'Black/n line rear side black.jpeg',        ecotronic: 'Ecotronic/n line rear side ecotronic.jpeg',     cyber: 'Cyber Grey/n line rear side cyber grey.jpeg',     red: 'red/n line rear side red.jpeg'     },
+    'rear':      { black: 'Black/n line rear black.jpeg',             ecotronic: 'Ecotronic/n line rear ecotronic.jpeg',          cyber: 'Cyber Grey/n line rear cyber grey.jpeg',          red: 'red/n line rear red.jpeg'          },
+    'dash':      { black: 'n line dash.jpeg',    ecotronic: 'n line dash.jpeg',    cyber: 'n line dash.jpeg',    red: 'n line dash.jpeg'    },
+    'seats':     { black: 'n line seats.jpeg',   ecotronic: 'n line seats.jpeg',   cyber: 'n line seats.jpeg',   red: 'n line seats.jpeg'   },
+    'specs':     { black: 'Black/n line side black.jpeg',             ecotronic: 'Ecotronic/n line side ecotronic.jpeg',          cyber: 'Cyber Grey/n line side cyber grey.jpeg',          red: 'red/n line side red.jpeg'          },
   },
   n: {
-    'front':     { ecotronic: 'Ecotronic/n front ecotronic zoom.jpeg',         cyber: 'Cyber Grey/n front cyber grey zoom.jpeg',         red: 'red/n front red zoom.jpeg'         },
-    'front-side':{ ecotronic: 'Ecotronic/n front side ecotronic.jpeg',         cyber: 'Cyber Grey/n front side cyber grey.jpeg',         red: 'red/n front side red.jpeg'         },
-    'side':      { ecotronic: 'Ecotronic/n side ecotronic.jpeg',               cyber: 'Cyber Grey/n side cyber grey.jpeg',               red: 'red/n side red.jpeg'               },
-    'rear-side': { ecotronic: 'Ecotronic/n back side ecotronic.jpeg',          cyber: 'Cyber Grey/n back side cyber grey.jpeg',          red: 'red/n back side red.jpeg'          },
-    'rear':      { ecotronic: 'Ecotronic/n rear ecotronic.jpeg',               cyber: 'Cyber Grey/n rear cyber grey.jpeg',               red: 'red/n rear red.jpeg'               },
-    'dash':      { ecotronic: 'n dash.jpeg',         cyber: 'n dash.jpeg',         red: 'n dash.jpeg'         },
-    'seats':     { ecotronic: 'n seats.jpeg',        cyber: 'n seats.jpeg',        red: 'n seats.jpeg'        },
-    'specs':     { ecotronic: 'Ecotronic/n side ecotronic.jpeg',               cyber: 'Cyber Grey/n side cyber grey.jpeg',               red: 'red/n side red.jpeg'               },
+    'front':     { black: 'Black/n front black zoom.jpeg',    ecotronic: 'Ecotronic/n front ecotronic zoom.jpeg',         cyber: 'Cyber Grey/n front cyber grey zoom.jpeg',         red: 'red/n front red zoom.jpeg'         },
+    'front-side':{ black: 'Black/n front side black.jpeg',    ecotronic: 'Ecotronic/n front side ecotronic.jpeg',         cyber: 'Cyber Grey/n front side cyber grey.jpeg',         red: 'red/n front side red.jpeg'         },
+    'side':      { black: 'Black/n side black.jpeg',          ecotronic: 'Ecotronic/n side ecotronic.jpeg',               cyber: 'Cyber Grey/n side cyber grey.jpeg',               red: 'red/n side red.jpeg'               },
+    'rear-side': { black: 'Black/n rear side black.jpeg',     ecotronic: 'Ecotronic/n back side ecotronic.jpeg',          cyber: 'Cyber Grey/n back side cyber grey.jpeg',          red: 'red/n back side red.jpeg'          },
+    'rear':      { black: 'Black/n rear black.jpeg',          ecotronic: 'Ecotronic/n rear ecotronic.jpeg',               cyber: 'Cyber Grey/n rear cyber grey.jpeg',               red: 'red/n rear red.jpeg'               },
+    'dash':      { black: 'n dash.jpeg',         ecotronic: 'n dash.jpeg',         cyber: 'n dash.jpeg',         red: 'n dash.jpeg'         },
+    'seats':     { black: 'n seats.jpeg',        ecotronic: 'n seats.jpeg',        cyber: 'n seats.jpeg',        red: 'n seats.jpeg'        },
+    'specs':     { black: 'Black/n side black.jpeg',          ecotronic: 'Ecotronic/n side ecotronic.jpeg',               cyber: 'Cyber Grey/n side cyber grey.jpeg',               red: 'red/n side red.jpeg'               },
   },
 };
 
@@ -412,12 +424,13 @@ function getAvailableViews() {
 // ── PANELS ────────────────────────────────────────────────────────────────────
 function getPanels() {
   if (compareMode === 'models') {
-    // One model (pickedModel) shown in 3 colours — panels labelled with colour names
+    // One model (pickedModel) shown in all colours — panels labelled with colour names
     return COLOURS.map(c => {
       const label = (pickedModel === 'n' && c.name5n) ? c.name5n : c.name;
       return {
         id: `colour-${c.key}`, label,
         modelId: pickedModel,
+        colourKey: c.key,
         getImage: (viewKey) => images[pickedModel][viewKey][c.key],
       };
     });
@@ -426,6 +439,7 @@ function getPanels() {
   return MODELS.map(m => ({
     id: m.id, label: m.name,
     modelId: m.id,
+    colourKey: currentColour,
     getImage: (viewKey) => images[m.id][viewKey][currentColour],
   }));
 }
@@ -434,7 +448,10 @@ function getPanels() {
 function renderSelector() {
   const area = document.getElementById('selectorArea');
   if (compareMode === 'models') {
-    // Show model slates; clicking one sets pickedModel for colours mode
+    // Flex row of model slates
+    area.style.display = 'flex';
+    area.style.gridTemplateColumns = '';
+    area.style.gap = '8px';
     area.innerHTML = MODELS.map(m => `
       <div class="model-slate model-slate-${m.id}${pickedModel === m.id ? ' active' : ''}"
            onclick="setPickedModel('${m.id}')">
@@ -442,13 +459,15 @@ function renderSelector() {
       </div>
     `).join('');
   } else {
-    // Show colour slates
+    // 2×2 grid of colour slates — same total height as one row of model slates
+    area.style.display = 'grid';
+    area.style.gridTemplateColumns = '1fr 1fr';
+    area.style.gap = '6px';
     area.innerHTML = COLOURS.map(c => `
-      <div class="colour-card ${c.key}-card${currentColour === c.key ? ' active' : ''}"
+      <div class="colour-card colour-card-grid ${c.key}-card${currentColour === c.key ? ' active' : ''}"
            data-colour="${c.key}" onclick="setColour('${c.key}')">
         <div class="active-tick">${TICK_SVG}</div>
-        <div class="colour-card-name">${c.name}</div>
-        ${c.name5n ? `<div class="colour-card-name2">${c.name5n} (5 N)</div>` : ''}
+        <div class="colour-card-name">${c.name}${c.name5n ? `<span class="colour-card-name2-inline">· ${c.name5n} (5 N)</span>` : ''}</div>
       </div>
     `).join('');
   }
@@ -514,6 +533,31 @@ function rebuildLbDots() {
   });
 }
 
+// ── OVERLAY POSITIONING ───────────────────────────────────────────────────────
+// Positions label (top-left) and logo (top-right) within the actual rendered
+// image content, not the panel box. Needed because object-fit:contain leaves
+// black bars (portrait images in landscape panels create large side gaps).
+function positionOverlays(idx) {
+  const img   = document.getElementById(`img-${idx}`);
+  const wrap  = document.getElementById(`wrap-${idx}`);
+  const label = document.getElementById(`plabel-${idx}`);
+  const logo  = document.getElementById(`logo-${idx}`);
+  if (!img || !wrap || !img.naturalWidth || !img.naturalHeight) return;
+
+  const ww = wrap.clientWidth, wh = wrap.clientHeight;
+  const pad = 8;
+  const availW = ww - pad * 2, availH = wh - pad * 2;
+  const scale  = Math.min(availW / img.naturalWidth, availH / img.naturalHeight);
+  const rw     = img.naturalWidth  * scale;
+  const rh     = img.naturalHeight * scale;
+  const ox     = (availW - rw) / 2 + pad; // left edge of rendered image within wrap
+  const oy     = (availH - rh) / 2 + pad; // top edge of rendered image within wrap
+
+  const inset = 10;
+  if (label) { label.style.left = (ox + inset) + 'px'; label.style.top = (oy + inset) + 'px'; }
+  if (logo)  { logo.style.right = (ww - ox - rw + inset) + 'px'; logo.style.left = 'auto'; logo.style.top = (oy + inset) + 'px'; }
+}
+
 // ── RENDER ────────────────────────────────────────────────────────────────────
 function render() {
   const view   = VIEWS[currentView];
@@ -549,6 +593,8 @@ function render() {
       img.src = filename || '';
       img.style.cursor = 'default';
       specs.classList.add('visible');
+      if (img.complete && img.naturalWidth) positionOverlays(idx);
+      else img.onload = () => positionOverlays(idx);
     } else {
       img.classList.remove('dimmed');
       img.style.cursor = 'zoom-in';
@@ -557,6 +603,12 @@ function render() {
         img.style.display     = 'block';
         missing.style.display = 'none';
         img.src = filename;
+        // Position label/logo over actual image content once dimensions are known
+        if (img.complete && img.naturalWidth) {
+          positionOverlays(idx);
+        } else {
+          img.onload = () => positionOverlays(idx);
+        }
       } else {
         img.style.display     = 'none';
         missing.style.display = 'flex';
@@ -700,9 +752,10 @@ document.addEventListener('keydown', e => {
   } else {
     if (e.key === 'ArrowLeft')  changeView(-1);
     if (e.key === 'ArrowRight') changeView(1);
-    if (e.key === '1') setColour('ecotronic');
-    if (e.key === '2') setColour('cyber');
-    if (e.key === '3') setColour('red');
+    if (e.key === '1') setColour('black');
+    if (e.key === '2') setColour('ecotronic');
+    if (e.key === '3') setColour('cyber');
+    if (e.key === '4') setColour('red');
   }
 });
 
