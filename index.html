@@ -565,9 +565,12 @@ function buildPanels() {
   const panels = getPanels();
   grid.innerHTML = '';
 
+  const isOldNew = compareMode === 'oldnew';
+
   panels.forEach((panel, idx) => {
     const isMiddle = idx === 1;
     const spec     = panel.modelId ? SPECS[panel.modelId] : null;
+    const wrapBg   = (isOldNew && panel.id === 'original') ? 'background:#fff;' : '';
 
     const el = document.createElement('div');
     el.className = 'model-panel';
@@ -582,18 +585,26 @@ function buildPanels() {
       </div>
     ` : '';
 
+    // Arrows: in oldnew mode place prev on right edge of panel 0, next on left edge of panel 1
+    let arrowsHtml = '';
+    if (isOldNew) {
+      if (idx === 0) arrowsHtml = `<button class="panel-arrow" id="btnPrev" style="right:8px;left:auto;" onclick="changeView(-1)" aria-label="Previous"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>`;
+      if (idx === 1) arrowsHtml = `<button class="panel-arrow" id="btnNext" style="left:8px;right:auto;" onclick="changeView(1)" aria-label="Next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>`;
+    } else if (isMiddle) {
+      arrowsHtml = `
+        <button class="panel-arrow panel-arrow-left" id="btnPrev" onclick="changeView(-1)" aria-label="Previous">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="panel-arrow panel-arrow-right" id="btnNext" onclick="changeView(1)" aria-label="Next">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>`;
+    }
+
     el.innerHTML = `
-      <div class="image-wrap" id="wrap-${idx}">
+      <div class="image-wrap" id="wrap-${idx}" style="${wrapBg}">
         <div class="panel-label" id="plabel-${idx}">${panel.label}</div>
         <img class="panel-logo" id="logo-${idx}" src="hyundailogo.png" alt="">
-        ${isMiddle ? `
-          <button class="panel-arrow panel-arrow-left" id="btnPrev" onclick="changeView(-1)" aria-label="Previous">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-          </button>
-          <button class="panel-arrow panel-arrow-right" id="btnNext" onclick="changeView(1)" aria-label="Next">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
-        ` : ''}
+        ${arrowsHtml}
         <img class="car-img" id="img-${idx}" src="" alt="${panel.label}" draggable="false" onclick="openLightbox(${idx})">
         <div class="missing-placeholder" id="missing-${idx}" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="21" x2="21" y2="3"/></svg>
