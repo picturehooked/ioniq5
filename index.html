@@ -426,11 +426,11 @@ const images = {
 
 // Original model images (Old vs New mode)
 const imagesOriginal = {
-  'front':      'Original model/front.webp',
-  'front-side': 'Original model/frontside original.webp',
-  'side':       'Original model/side original.webp',
+  'front':      'Original model/front_comp.jpeg',
+  'front-side': 'Original model/frontside_comp.jpeg',
+  'side':       'Original model/side_comp.jpeg',
   'rear-side':  null,
-  'rear':       'Original model/rear original.webp',
+  'rear':       'Original model/rear_comp.jpeg',
   'dash':       'Original model/dash original.webp',
   'seats':      'Original model/seats original.webp',
 };
@@ -570,7 +570,7 @@ function buildPanels() {
   panels.forEach((panel, idx) => {
     const isMiddle = idx === 1;
     const spec     = panel.modelId ? SPECS[panel.modelId] : null;
-    const isOriginal = isOldNew && panel.id === 'original';
+    const isOriginal = false; // composited jpegs need no special styling
 
     const el = document.createElement('div');
     el.className = 'model-panel';
@@ -707,10 +707,6 @@ function render() {
       label.classList.toggle('label-interior', view.interior);
     }
     if (logo) logo.style.display = isSpecs ? 'none' : '';
-    // Original panel: white bg for exterior only, not interior/dash/seats
-    if (compareMode === 'oldnew' && panel.id === 'original' && img) {
-      img.style.background = view.interior ? '' : '#fff';
-    }
 
     // Specs view: show dimmed side image + specs overlay
     if (isSpecs && specs) {
