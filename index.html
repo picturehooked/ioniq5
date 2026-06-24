@@ -451,7 +451,7 @@ let colourActivation  = ['black', 'ecotronic', 'cyber']; // LRU order: oldest fi
 function getAvailableViews() {
   return VIEWS.filter(v => {
     if (compareMode === 'models' && (v.interior || v.modelsOnly)) return false;
-    if (compareMode === 'oldnew' && v.modelsOnly) return false;
+    if (compareMode === 'oldnew' && (v.modelsOnly || v.key === 'rear-side')) return false;
     return true;
   });
 }
@@ -597,9 +597,8 @@ function buildPanels() {
         </button>`;
     }
 
-    // Original image: inset only (no width/height) — object-fit:contain handles aspect ratio
-    // Interior views skip the white background
-    const origImgStyle = isOriginal ? 'inset:8% 5%;' : '';
+    // Original image: override CSS width/height with auto so inset fully controls the box
+    const origImgStyle = isOriginal ? 'top:8%;left:5%;right:5%;bottom:8%;width:auto;height:auto;' : '';
 
     el.innerHTML = `
       <div class="image-wrap" id="wrap-${idx}">
@@ -620,7 +619,7 @@ function buildPanels() {
     // In oldnew mode, insert arrow bar between the two panels after panel 0
     if (isOldNew && idx === 0) {
       const arrowBar = document.createElement('div');
-      arrowBar.style.cssText = 'display:flex;justify-content:center;gap:16px;align-items:center;flex-shrink:0;padding:4px 0;';
+      arrowBar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;flex-shrink:0;padding:4px 0;';
       arrowBar.innerHTML = `
         <button class="panel-arrow" id="btnPrev" style="position:relative;top:auto;transform:none;" onclick="changeView(-1)" aria-label="Previous">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
