@@ -66,7 +66,7 @@
     border-color: rgba(255,255,255,0.6);
     box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 4px 20px rgba(0,0,0,0.5);
   }
-  .colour-card.black-card     { background: linear-gradient(145deg, #2e2e33 0%, #1a1a1f 40%, #0e0e12 100%); }
+  .colour-card.black-card     { background: linear-gradient(145deg, #2e2e33 0%, #1a1a1f 40%, #0e0e12 100%); border-color: rgba(255,255,255,0.25); }
   .colour-card.ecotronic-card { background: linear-gradient(145deg, #7a7f78 0%, #5e6359 40%, #444840 100%); }
   .colour-card.cyber-card     { background: linear-gradient(145deg, #d0d4d8 0%, #b0b6bc 40%, #8e9399 100%); }
   .colour-card.red-card       { background: linear-gradient(145deg, #cc3b2a 0%, #a82d1e 40%, #7a1f13 100%); }
@@ -173,7 +173,7 @@
   .swatch-name { font-size: 10px; font-weight: 700; color: #fff; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
   .swatch-tick { flex-shrink: 0; width: 12px; height: 12px; }
-  .colour-swatch.black-card     { background: linear-gradient(145deg, #2e2e33 0%, #1a1a1f 40%, #0e0e12 100%); }
+  .colour-swatch.black-card     { background: linear-gradient(145deg, #2e2e33 0%, #1a1a1f 40%, #0e0e12 100%); border-color: rgba(255,255,255,0.3); }
   .colour-swatch.ecotronic-card { background: linear-gradient(145deg, #7a7f78 0%, #5e6359 40%, #444840 100%); }
   .colour-swatch.cyber-card     { background: linear-gradient(145deg, #d0d4d8 0%, #b0b6bc 40%, #8e9399 100%); }
   .colour-swatch.red-card       { background: linear-gradient(145deg, #cc3b2a 0%, #a82d1e 40%, #7a1f13 100%); }
@@ -652,9 +652,11 @@ function buildPanels() {
       </div>
     ` : '';
 
-    // Arrows: in oldnew mode, both arrows sit between the two panels (appended after panel 0)
+    // Arrows
+    const isDesktop = window.innerWidth > 680;
     let arrowsHtml = '';
     if (!isOldNew && isMiddle) {
+      // Standard 3-panel mode: both arrows on middle panel
       arrowsHtml = `
         <button class="panel-arrow panel-arrow-left" id="btnPrev" onclick="changeView(-1)" aria-label="Previous">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -662,6 +664,17 @@ function buildPanels() {
         <button class="panel-arrow panel-arrow-right" id="btnNext" onclick="changeView(1)" aria-label="Next">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </button>`;
+    } else if (isOldNew && isDesktop) {
+      // Old vs New desktop: prev on left edge of panel 0, next on right edge of panel 1
+      if (idx === 0) {
+        arrowsHtml = `<button class="panel-arrow panel-arrow-left" id="btnPrev" onclick="changeView(-1)" aria-label="Previous">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>`;
+      } else if (idx === 1) {
+        arrowsHtml = `<button class="panel-arrow panel-arrow-right" id="btnNext" onclick="changeView(1)" aria-label="Next">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>`;
+      }
     }
 
     // Original image: override CSS width/height with auto so inset fully controls the box
@@ -685,8 +698,8 @@ function buildPanels() {
     `;
     grid.appendChild(el);
 
-    // In oldnew mode, insert arrow bar between the two panels after panel 0
-    if (isOldNew && idx === 0) {
+    // In oldnew mode on mobile: insert arrow bar between the two stacked panels after panel 0
+    if (isOldNew && !isDesktop && idx === 0) {
       const arrowBar = document.createElement('div');
       arrowBar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;flex-shrink:0;padding:4px 0;width:100%;box-sizing:border-box;';
       arrowBar.innerHTML = `
