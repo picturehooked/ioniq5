@@ -209,6 +209,9 @@
     font-size: 7px; margin-top: 4px;
   }
 
+  /* Centred overlay variant — for Changes and Performance pages */
+  .specs-overlay.overlay-centre { padding: 16px 14px; align-items: flex-start; }
+
   /* ── PANEL ARROWS ── */
   .panel-arrow {
     position: absolute; top: 50%; transform: translateY(-50%);
@@ -336,8 +339,9 @@ const VIEWS = [
   { label: 'Rear',       key: 'rear',       interior: false, modelsOnly: false },
   { label: 'Dashboard',  key: 'dash',       interior: true,  modelsOnly: false },
   { label: 'Seats',      key: 'seats',      interior: true,  modelsOnly: false },
+  { label: 'Performance', key: 'perf',      interior: false, modelsOnly: true  },
   { label: 'Specs',      key: 'specs',      interior: false, modelsOnly: true  },
-  { label: 'Changes',   key: 'changes',    interior: false, modelsOnly: false, oldNewOnly: true },
+  { label: 'Changes',    key: 'changes',    interior: false, modelsOnly: false, oldNewOnly: true },
 ];
 
 const MODELS = [
@@ -438,6 +442,39 @@ const CHANGES = {
   ],
 };
 
+const PERF = {
+  ultimate: {
+    heading: 'Ultimate',
+    items: [
+      'Battery: 84 kWh · AC charging: 11 kW',
+      'RWD — 168 kW · 350 Nm · 325 miles · DC: 260 kW',
+      'AWD — 239 kW · 605 Nm · 309 miles · DC: 260 kW',
+      '10–80% DC charge: 18 min',
+      '<span style="font-size:10px;opacity:0.6;">Range may vary slightly vs N Line S due to tyre specification</span>',
+    ],
+  },
+  nline: {
+    heading: 'N Line S',
+    items: [
+      'Battery: 84 kWh · AC charging: 11 kW',
+      'RWD — 168 kW · 350 Nm · 325 miles · DC: 260 kW',
+      'AWD — 239 kW · 605 Nm · 309 miles · DC: 260 kW',
+      '10–80% DC charge: 18 min',
+      '<span style="font-size:10px;opacity:0.6;">Range may vary slightly vs Ultimate due to tyre specification</span>',
+    ],
+  },
+  n: {
+    heading: '5 N',
+    items: [
+      'Battery: 84 kWh · AC charging: 11 kW',
+      'AWD — 448 kW (478 kW boost) · 740 Nm · 278 miles',
+      'DC charging: 350 kW*',
+      '10–80% DC charge: 18 min',
+      '<span style="font-size:10px;opacity:0.6;">* 350 kW DC charging subject to charger availability</span>',
+    ],
+  },
+};
+
 // Original model images (Old vs New mode)
 const imagesOriginal = {
   'front':      'Original model/front_comp.jpeg',
@@ -504,7 +541,7 @@ function getPanels() {
     id: m.id, label: m.name,
     modelId: m.id,
     colourKey: currentColour,
-    getImage: (viewKey) => images[m.id][viewKey][currentColour],
+    getImage: (viewKey) => images[m.id][viewKey === 'perf' ? 'side' : viewKey][currentColour],
   }));
 }
 
@@ -600,9 +637,20 @@ function buildPanels() {
       </div>
     ` : '';
 
+    // Performance overlay — Trim/Model mode only
+    const perfData  = panel.modelId ? PERF[panel.modelId] : null;
+    const perfHtml  = perfData ? `
+      <div class="specs-overlay overlay-centre" id="perf-${idx}">
+        <div class="specs-heading">${perfData.heading}<span style="font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);margin-left:9px;">(performance &amp; range)</span></div>
+        <ul class="specs-list">
+          ${perfData.items.map(i => `<li><span>${i}</span></li>`).join('')}
+        </ul>
+      </div>
+    ` : '';
+
     // Changes overlay — Old vs New only, on Ultimate panel (idx 1)
     const changesHtml = (isOldNew && idx === 1) ? `
-      <div class="specs-overlay" id="changes-${idx}">
+      <div class="specs-overlay overlay-centre" id="changes-${idx}">
         <div class="specs-heading">${CHANGES.heading}</div>
         <ul class="specs-list">
           ${CHANGES.items.map(i => `<li><span>${i}</span></li>`).join('')}
@@ -636,6 +684,7 @@ function buildPanels() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="21" x2="21" y2="3"/></svg>
           <p>Image not available</p>
         </div>
+        ${perfHtml}
         ${specsHtml}
         ${changesHtml}
       </div>
@@ -711,6 +760,7 @@ function render() {
   const view   = VIEWS[currentView];
   const panels = getPanels();
   const isSpecs   = view.key === 'specs';
+  const isPerf    = view.key === 'perf';
   const isChanges = view.key === 'changes';
 
   // Both arrows always enabled — full circular navigation
@@ -729,7 +779,8 @@ function render() {
 
     const logo    = document.getElementById(`logo-${idx}`);
     const changes = document.getElementById(`changes-${idx}`);
-    const hideLabel = isSpecs || isChanges;
+    const perf    = document.getElementById(`perf-${idx}`);
+    const hideLabel = isSpecs || isChanges || isPerf;
     if (label) {
       label.textContent = panel.label;
       label.style.display = hideLabel ? 'none' : '';
@@ -756,6 +807,20 @@ function render() {
       return;
     }
     if (changes) changes.classList.remove('visible');
+
+    // Performance view
+    if (isPerf && perf) {
+      img.classList.add('dimmed');
+      img.style.display = 'block'; img.style.cursor = 'default';
+      missing.style.display = 'none';
+      img.src = filename || '';
+      perf.classList.add('visible');
+      if (specs) specs.classList.remove('visible');
+      if (img.complete && img.naturalWidth) positionOverlays(idx);
+      else img.onload = () => positionOverlays(idx);
+      return;
+    }
+    if (perf) perf.classList.remove('visible');
 
     // Specs view: show dimmed side image + specs overlay
     if (isSpecs && specs) {
