@@ -508,16 +508,16 @@ function renderSelector() {
         }).join('')}
       </div>`;
   } else {
-    // Single row of pure colour swatches — no text, equal width
-    area.style.display = 'flex';
-    area.style.flexDirection = 'row';
-    area.style.gridTemplateColumns = '';
+    // 2×2 grid of colour cards with names
+    area.style.display = 'grid';
+    area.style.flexDirection = '';
+    area.style.gridTemplateColumns = '1fr 1fr';
     area.style.gap = '6px';
     area.innerHTML = COLOURS.map(c => `
       <div class="colour-card ${c.key}-card${currentColour === c.key ? ' active' : ''}"
-           style="flex:1;"
+           style="padding:6px 10px;min-height:0;"
            data-colour="${c.key}" onclick="setColour('${c.key}')">
-        <div class="colour-card-name">${c.name}</div>
+        <div class="colour-card-name">${c.name}${c.name5n ? `<span class="colour-card-name2-inline">${c.name5n}</span>` : ''}</div>
         <div class="active-tick">${TICK_SVG}</div>
       </div>
     `).join('');
