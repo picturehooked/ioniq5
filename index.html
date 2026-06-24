@@ -144,8 +144,9 @@
   /* Interior images have dark backgrounds — keep label white */
   .panel-label.label-interior { color: #fff; }
 
-  /* Hyundai logo — position set by JS positionOverlays() */
+  /* Hyundai logo — hidden everywhere */
   .panel-logo {
+    display: none !important;
     position: absolute; top: 14px; right: 14px; left: auto; z-index: 4;
     height: 22px; width: auto; opacity: 0.3;
     filter: brightness(0) invert(1); pointer-events: none;
@@ -518,7 +519,8 @@ function renderSelector() {
       <div class="colour-card ${c.key}-card${currentColour === c.key ? ' active' : ''}"
            style="padding:6px 10px;min-height:0;"
            data-colour="${c.key}" onclick="setColour('${c.key}')">
-        <div class="colour-card-name">${c.name}${c.name5n ? `<span class="colour-card-name2-inline">${c.name5n}</span>` : ''}</div>
+        <div class="colour-card-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.name}</div>
+        ${c.name5n ? `<div class="colour-card-name2" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.name5n}</div>` : ''}
         <div class="active-tick">${TICK_SVG}</div>
       </div>
     `).join('');
