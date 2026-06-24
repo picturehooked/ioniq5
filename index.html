@@ -383,6 +383,7 @@ const SPECS = {
       'Vision roof optional',
       'Limited colour range',
       'Performance Blue available exclusively',
+      '<span style="color:#e03030;font-weight:700;">...and a shed load more power!!</span>',
     ],
   },
 };
@@ -542,7 +543,7 @@ function buildPanels() {
       <div class="specs-overlay" id="specs-${idx}">
         <div class="specs-heading">${spec.heading}<span style="font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);margin-left:9px;">(key specification items)</span></div>
         <ul class="specs-list">
-          ${spec.items.map(i => `<li>${i}</li>`).join('')}
+          ${spec.items.map(i => `<li><span>${i}</span></li>`).join('')}
         </ul>
       </div>
     ` : '';
