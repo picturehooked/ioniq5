@@ -209,8 +209,8 @@
     font-size: 7px; margin-top: 4px;
   }
 
-  /* Centred overlay variant — for Changes and Performance pages */
-  .specs-overlay.overlay-centre { padding: 16px 14px; align-items: flex-start; }
+  /* Centred overlay variant — for Changes page (vertical centre, symmetric padding) */
+  .specs-overlay.overlay-centre { padding: 16px 14px; align-items: flex-start; justify-content: center; }
 
   /* ── PANEL ARROWS ── */
   .panel-arrow {
@@ -446,30 +446,25 @@ const PERF = {
   ultimate: {
     heading: 'Ultimate',
     items: [
-      'Battery: 84 kWh · AC charging: 11 kW',
-      'RWD — 168 kW · 350 Nm · 325 miles · DC: 260 kW',
-      'AWD — 239 kW · 605 Nm · 309 miles · DC: 260 kW',
-      '10–80% DC charge: 18 min',
-      '<span style="font-size:10px;opacity:0.6;">Range may vary slightly vs N Line S due to tyre specification</span>',
+      'Battery: 84 kWh  ·  AC / DC: 11 kW / 260 kW  ·  10-80%: 18 min',
+      'RWD: 168 kW  ·  350 Nm  ·  325 miles',
+      'AWD: 239 kW  ·  605 Nm  ·  309 miles',
     ],
   },
   nline: {
     heading: 'N Line S',
     items: [
-      'Battery: 84 kWh · AC charging: 11 kW',
-      'RWD — 168 kW · 350 Nm · 325 miles · DC: 260 kW',
-      'AWD — 239 kW · 605 Nm · 309 miles · DC: 260 kW',
-      '10–80% DC charge: 18 min',
+      'Battery: 84 kWh  ·  AC / DC: 11 kW / 260 kW  ·  10-80%: 18 min',
+      'RWD: 168 kW  ·  350 Nm  ·  325 miles',
+      'AWD: 239 kW  ·  605 Nm  ·  309 miles',
       '<span style="font-size:10px;opacity:0.6;">Range may vary slightly vs Ultimate due to tyre specification</span>',
     ],
   },
   n: {
     heading: '5 N',
     items: [
-      'Battery: 84 kWh · AC charging: 11 kW',
-      'AWD — 448 kW (478 kW boost) · 740 Nm · 278 miles',
-      'DC charging: 350 kW*',
-      '10–80% DC charge: 18 min',
+      'Battery: 84 kWh  ·  AC / DC: 11 kW / 350 kW  ·  10-80%: 18 min',
+      'AWD: 448 kW (478 kW boost)  ·  740 Nm  ·  278 miles',
       '<span style="font-size:10px;opacity:0.6;">* 350 kW DC charging subject to charger availability</span>',
     ],
   },
@@ -640,7 +635,7 @@ function buildPanels() {
     // Performance overlay — Trim/Model mode only
     const perfData  = panel.modelId ? PERF[panel.modelId] : null;
     const perfHtml  = perfData ? `
-      <div class="specs-overlay overlay-centre" id="perf-${idx}">
+      <div class="specs-overlay" id="perf-${idx}">
         <div class="specs-heading">${perfData.heading}<span style="font-size:11px;font-weight:400;color:rgba(255,255,255,0.55);margin-left:9px;">(performance &amp; range)</span></div>
         <ul class="specs-list">
           ${perfData.items.map(i => `<li><span>${i}</span></li>`).join('')}
@@ -694,7 +689,7 @@ function buildPanels() {
     // In oldnew mode, insert arrow bar between the two panels after panel 0
     if (isOldNew && idx === 0) {
       const arrowBar = document.createElement('div');
-      arrowBar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;flex-shrink:0;padding:4px 0;';
+      arrowBar.style.cssText = 'display:flex;justify-content:space-between;align-items:center;flex-shrink:0;padding:4px 0;width:100%;box-sizing:border-box;';
       arrowBar.innerHTML = `
         <button class="panel-arrow" id="btnPrev" style="position:relative;top:auto;transform:none;" onclick="changeView(-1)" aria-label="Previous">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
