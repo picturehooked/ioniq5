@@ -337,6 +337,7 @@ const VIEWS = [
   { label: 'Dashboard',  key: 'dash',       interior: true,  modelsOnly: false },
   { label: 'Seats',      key: 'seats',      interior: true,  modelsOnly: false },
   { label: 'Specs',      key: 'specs',      interior: false, modelsOnly: true  },
+  { label: 'Changes',   key: 'changes',    interior: false, modelsOnly: false, oldNewOnly: true },
 ];
 
 const MODELS = [
@@ -424,6 +425,19 @@ const images = {
   },
 };
 
+const CHANGES = {
+  heading: 'What\'s New · 2026',
+  items: [
+    'Larger battery pack — Long range 77.4kWh › 84kWh',
+    'Rear wiper added',
+    'Wireless Apple CarPlay & Android Auto',
+    'Infotainment system enhancements',
+    'Better centre console layout — more physical buttons',
+    'USB-C ports throughout',
+    'Updated driver assistance systems',
+  ],
+};
+
 // Original model images (Old vs New mode)
 const imagesOriginal = {
   'front':      'Original model/front_comp.jpeg',
@@ -452,6 +466,7 @@ function getAvailableViews() {
   return VIEWS.filter(v => {
     if (compareMode === 'models' && (v.interior || v.modelsOnly)) return false;
     if (compareMode === 'oldnew' && (v.modelsOnly || v.key === 'rear-side')) return false;
+    if (compareMode !== 'oldnew' && v.oldNewOnly) return false;
     return true;
   });
 }
@@ -468,7 +483,7 @@ function getPanels() {
       {
         id: 'ultimate-ecotronic', label: '2026 Ultimate',
         modelId: 'ultimate',
-        getImage: (viewKey) => images['ultimate'][viewKey]['ecotronic'],
+        getImage: (viewKey) => images['ultimate'][viewKey === 'changes' ? 'side' : viewKey]['ecotronic'],
       },
     ];
   }
@@ -585,6 +600,16 @@ function buildPanels() {
       </div>
     ` : '';
 
+    // Changes overlay — Old vs New only, on Ultimate panel (idx 1)
+    const changesHtml = (isOldNew && idx === 1) ? `
+      <div class="specs-overlay" id="changes-${idx}">
+        <div class="specs-heading">${CHANGES.heading}</div>
+        <ul class="specs-list">
+          ${CHANGES.items.map(i => `<li><span>${i}</span></li>`).join('')}
+        </ul>
+      </div>
+    ` : '';
+
     // Arrows: in oldnew mode, both arrows sit between the two panels (appended after panel 0)
     let arrowsHtml = '';
     if (!isOldNew && isMiddle) {
@@ -612,6 +637,7 @@ function buildPanels() {
           <p>Image not available</p>
         </div>
         ${specsHtml}
+        ${changesHtml}
       </div>
     `;
     grid.appendChild(el);
@@ -684,7 +710,8 @@ function positionOverlays(idx) {
 function render() {
   const view   = VIEWS[currentView];
   const panels = getPanels();
-  const isSpecs = view.key === 'specs';
+  const isSpecs   = view.key === 'specs';
+  const isChanges = view.key === 'changes';
 
   // Both arrows always enabled — full circular navigation
   const prev = document.getElementById('btnPrev');
@@ -700,13 +727,35 @@ function render() {
     const label   = document.getElementById(`plabel-${idx}`);
     const specs   = document.getElementById(`specs-${idx}`);
 
-    const logo = document.getElementById(`logo-${idx}`);
+    const logo    = document.getElementById(`logo-${idx}`);
+    const changes = document.getElementById(`changes-${idx}`);
+    const hideLabel = isSpecs || isChanges;
     if (label) {
       label.textContent = panel.label;
-      label.style.display = isSpecs ? 'none' : '';
+      label.style.display = hideLabel ? 'none' : '';
       label.classList.toggle('label-interior', view.interior);
     }
-    if (logo) logo.style.display = isSpecs ? 'none' : '';
+    if (logo) logo.style.display = hideLabel ? 'none' : '';
+
+    // Changes view: Original panel blank, Ultimate panel shows dimmed side + changes overlay
+    if (isChanges) {
+      if (changes) changes.classList.add('visible');
+      if (specs)   specs.classList.remove('visible');
+      if (panel.id === 'original') {
+        img.style.display = 'none';
+        missing.style.display = 'none';
+      } else {
+        img.classList.add('dimmed');
+        img.style.display = 'block';
+        missing.style.display = 'none';
+        img.src = filename || '';
+        img.style.cursor = 'default';
+        if (img.complete && img.naturalWidth) positionOverlays(idx);
+        else img.onload = () => positionOverlays(idx);
+      }
+      return;
+    }
+    if (changes) changes.classList.remove('visible');
 
     // Specs view: show dimmed side image + specs overlay
     if (isSpecs && specs) {
