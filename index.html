@@ -298,6 +298,7 @@
     <div class="compare-toggle">
       <div class="compare-tab active" data-mode="models" onclick="setMode('models')">Colours</div>
       <div class="compare-tab" data-mode="colours" onclick="setMode('colours')">Trim / Model</div>
+      <div class="compare-tab" data-mode="oldnew" onclick="setMode('oldnew')">Old vs New</div>
     </div>
   </div>
   <div id="selectorArea"></div>
@@ -423,6 +424,17 @@ const images = {
   },
 };
 
+// Original model images (Old vs New mode)
+const imagesOriginal = {
+  'front':      'Original model/front.webp',
+  'front-side': 'Original model/frontside original.webp',
+  'side':       'Original model/side original.webp',
+  'rear-side':  null,
+  'rear':       'Original model/rear original.webp',
+  'dash':       'Original model/dash original.webp',
+  'seats':      'Original model/seats original.webp',
+};
+
 // ── STATE ─────────────────────────────────────────────────────────────────────
 let currentView   = 0;
 let currentColour = 'ecotronic';
@@ -438,14 +450,28 @@ let colourActivation  = ['black', 'ecotronic', 'cyber']; // LRU order: oldest fi
 // ── AVAILABLE VIEWS ───────────────────────────────────────────────────────────
 function getAvailableViews() {
   return VIEWS.filter(v => {
-    // Models mode = 1 model / 3 colours: exclude interior (same image 3×) and specs
     if (compareMode === 'models' && (v.interior || v.modelsOnly)) return false;
+    if (compareMode === 'oldnew' && v.modelsOnly) return false;
     return true;
   });
 }
 
 // ── PANELS ────────────────────────────────────────────────────────────────────
 function getPanels() {
+  if (compareMode === 'oldnew') {
+    return [
+      {
+        id: 'original', label: 'Original',
+        modelId: null,
+        getImage: (viewKey) => imagesOriginal[viewKey] || null,
+      },
+      {
+        id: 'ultimate-ecotronic', label: '2026 Ultimate',
+        modelId: 'ultimate',
+        getImage: (viewKey) => images['ultimate'][viewKey]['ecotronic'],
+      },
+    ];
+  }
   if (compareMode === 'models') {
     // Picked model shown in the 3 active colours — panels labelled with colour names
     return COLOURS.filter(c => activeColours.includes(c.key)).map(c => {
@@ -485,6 +511,12 @@ function toggleActiveColour(key) {
 // ── SELECTOR AREA ─────────────────────────────────────────────────────────────
 function renderSelector() {
   const area = document.getElementById('selectorArea');
+  if (compareMode === 'oldnew') {
+    area.style.display = 'none';
+    area.innerHTML = '';
+    return;
+  }
+  area.style.display = '';
   if (compareMode === 'models') {
     // Flex column: model slate row + colour swatch row (pick which 3 of 4 to show)
     area.style.display = 'flex';
